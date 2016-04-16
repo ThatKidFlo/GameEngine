@@ -1,0 +1,7 @@
+.idea/
+*.iml
+*.iws
+target/
+native/
+lib/
+pom.xml
