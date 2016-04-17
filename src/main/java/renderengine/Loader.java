@@ -1,15 +1,26 @@
 package renderengine;
 
+import de.matthiasmann.twl.utils.PNGDecoder;
+import models.RawModel;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import utils.TextureUtil;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Created by ThatKidFlo on 15.04.2016.
@@ -23,18 +34,81 @@ public class Loader {
      */
     private List<Integer> vaos = new ArrayList<Integer>();
     private List<Integer> vbos = new ArrayList<Integer>();
+    private List<Integer> textures = new ArrayList<>();
 
-    public RawModel loadToVAO(float[] positions, int[] indices) {
+    public RawModel loadToVAO(float[] positions, float[] textureCoordinates, int[] indices) {
         int vaoID = createVAO();
         bindIndicesBuffer(indices);
-        storeDataInAttributeList(0, positions);
+        storeDataInAttributeList(0, 3, positions);
+        storeDataInAttributeList(1, 2, textureCoordinates);
         unbindVAO();
         return new RawModel(vaoID, indices.length);
+    }
+
+    /**
+     * Load a texture file, and bind it to the texture ID which is returned from this method.
+     *
+     * @param fileName - the name of the file containing 2D image data; "res/" will be prepended, and ".png" appended.
+     * @return - the ID of the generated texture.
+     */
+    public int loadTexture(String fileName) {
+        ByteBuffer buffer = null;
+        int height = 0;
+        int width = 0;
+        try {
+            InputStream in = new FileInputStream("res/" + fileName + ".png");
+            PNGDecoder decoder = new PNGDecoder(in);
+            height = decoder.getHeight();
+            width = decoder.getWidth();
+            buffer = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
+            buffer.order(ByteOrder.nativeOrder());
+            decoder.decode(buffer, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
+            buffer.flip();
+            in.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found!");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int textureID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        // This will wrap the textures.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        // Sharp filtering, for now
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+
+        GL30.glGenerateMipmap(textureID);
+
+        // Specify the 2D image data that should be bound to the texture
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+        // Bind the texture to its id.
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        // Keep track of the texture, for cleanup purposes.
+        textures.add(textureID);
+        return textureID;
+
+        /* This would be an alternative to all the above, which will decode PNG files.
+        TextureUtil texture = new TextureUtil("res/" + fileName + ".png");
+        textures.add(texture.getTextureID());
+
+        return texture.getTextureID();
+        */
     }
 
     public void cleanup() {
         vaos.stream().forEach((vao) -> GL30.glDeleteVertexArrays(vao));
         vbos.stream().forEach((vbo) -> GL15.glDeleteBuffers(vbo));
+        textures.stream().forEach((tex) -> GL11.glDeleteTextures(tex));
     }
 
     /**
@@ -58,7 +132,7 @@ public class Loader {
      * @param attributeNumber - VAO attribute list index.
      * @param data            - The vertex array to store in the VAO.
      */
-    private void storeDataInAttributeList(int attributeNumber, float[] data) {
+    private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
         int vboID = GL15.glGenBuffers();
         // add generated VBO to the garbage collection list.
         vbos.add(vboID);
@@ -75,7 +149,7 @@ public class Loader {
         // Set the attribute pointer to the one we've allocated, specifying that there are
         // 3 elements per vertex (i.e. 3D coordinates), of type float, not normalized, without
         // stride (no elements in between data), which start at index 0 of the array buffer.
-        GL20.glVertexAttribPointer(attributeNumber, 3, GL11.GL_FLOAT, false, 0, 0);
+        GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
 
         // Unbind the current VBO
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);

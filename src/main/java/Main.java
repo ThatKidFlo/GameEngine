@@ -1,14 +1,15 @@
+import models.TexturedModel;
 import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import renderengine.DisplayManager;
 import renderengine.Loader;
-import renderengine.RawModel;
+import models.RawModel;
 import renderengine.Renderer;
+import shaders.StaticShader;
+import textures.ModelTexture;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -120,6 +121,8 @@ public class Main {
 
         Loader loader = new Loader();
         Renderer renderer = new Renderer();
+        StaticShader shader = new StaticShader();
+
         float[] vertices = {
                 -0.5f, 0.5f, 0f,
                 -0.5f, -0.5f, 0f,
@@ -130,13 +133,24 @@ public class Main {
                 0, 1, 3,
                 3, 1, 2
         };
-        RawModel model = loader.loadToVAO(vertices, indices);
+        float[] textureCoordinates = {
+                0, 0,
+                0, 1,
+                1, 1,
+                1, 0
+        };
+        RawModel model = loader.loadToVAO(vertices, textureCoordinates, indices);
+        ModelTexture texture = new ModelTexture(loader.loadTexture("image"));
+        TexturedModel texturedModel = new TexturedModel(model, texture);
 
         while (glfwWindowShouldClose(DisplayManager.WINDOW) == GLFW_FALSE) {
             renderer.prepare();
-            renderer.render(model);
+            shader.start();
+            renderer.render(texturedModel);
+            shader.stop();
             DisplayManager.updateDisplay();
         }
+        shader.cleanup();
         loader.cleanup();
         DisplayManager.closeDisplay();
     }

@@ -1,0 +1,12 @@
+#version 400 core
+
+// output from the vertex shader is the input for the fragment shader
+in vec2 pass_textureCoordinates;
+out vec4 out_colour;
+
+uniform sampler2D textureSampler;
+
+void main(void) {
+    // returns the color on the texture at the pixel we give it, using the sampler
+    out_colour = texture(textureSampler, pass_textureCoordinates);
+}
