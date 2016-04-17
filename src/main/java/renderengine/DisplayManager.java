@@ -20,8 +20,8 @@ public class DisplayManager {
 
     public static long WINDOW = 0;
 
-    private static final int WINDOW_WIDTH = 1280;
-    private static final int WINDOW_HEIGHT = 720;
+    public static final int WINDOW_WIDTH = 1280;
+    public static final int WINDOW_HEIGHT = 720;
 
     public static void createDisplay() {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));

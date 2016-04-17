@@ -1,4 +1,6 @@
+import entities.Entity;
 import models.TexturedModel;
+import org.joml.Vector3f;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -120,8 +122,8 @@ public class Main {
         DisplayManager.createDisplay();
 
         Loader loader = new Loader();
-        Renderer renderer = new Renderer();
         StaticShader shader = new StaticShader();
+        Renderer renderer = new Renderer(shader);
 
         float[] vertices = {
                 -0.5f, 0.5f, 0f,
@@ -141,12 +143,14 @@ public class Main {
         };
         RawModel model = loader.loadToVAO(vertices, textureCoordinates, indices);
         ModelTexture texture = new ModelTexture(loader.loadTexture("image"));
-        TexturedModel texturedModel = new TexturedModel(model, texture);
+        TexturedModel staticModel = new TexturedModel(model, texture);
+        Entity entity = new Entity(staticModel, new Vector3f(0, 0, -1f), 0, 0, 0, 1.0f);
 
         while (glfwWindowShouldClose(DisplayManager.WINDOW) == GLFW_FALSE) {
+            entity.increasePosition(0.0f, 0.0f, -0.1f);
             renderer.prepare();
             shader.start();
-            renderer.render(texturedModel);
+            renderer.render(entity, shader);
             shader.stop();
             DisplayManager.updateDisplay();
         }

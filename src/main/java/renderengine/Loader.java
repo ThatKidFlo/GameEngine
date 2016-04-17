@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import utils.TextureUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -79,13 +78,14 @@ public class Loader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
+        GL30.glGenerateMipmap(textureID);
+
         // Sharp filtering, for now
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
-        GL30.glGenerateMipmap(textureID);
 
         // Specify the 2D image data that should be bound to the texture
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
@@ -98,7 +98,7 @@ public class Loader {
         return textureID;
 
         /* This would be an alternative to all the above, which will decode PNG files.
-        TextureUtil texture = new TextureUtil("res/" + fileName + ".png");
+        Texture texture = new Texture("res/" + fileName + ".png");
         textures.add(texture.getTextureID());
 
         return texture.getTextureID();

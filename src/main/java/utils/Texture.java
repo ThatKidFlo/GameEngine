@@ -14,12 +14,12 @@ import static org.lwjgl.opengl.GL11.*;
 /**
  * Created by ThatKidFlo on 17.04.2016.
  */
-public class TextureUtil {
+public class Texture {
 
     private int width, height;
     private int texture;
 
-    public TextureUtil(String path) {
+    public Texture(String path) {
         texture = load(path);
     }
 

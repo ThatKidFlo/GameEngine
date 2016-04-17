@@ -2,6 +2,7 @@
 
 // output from the vertex shader is the input for the fragment shader
 in vec2 pass_textureCoordinates;
+in vec3 colour;
 out vec4 out_colour;
 
 uniform sampler2D textureSampler;
