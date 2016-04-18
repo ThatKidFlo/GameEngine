@@ -31,8 +31,8 @@ public class Loader {
      * the VAOs, and VBOs that have been allocated, in order to be able to properly
      * free the allocated memory, before closing our game.
      */
-    private List<Integer> vaos = new ArrayList<Integer>();
-    private List<Integer> vbos = new ArrayList<Integer>();
+    private List<Integer> vaos = new ArrayList<>();
+    private List<Integer> vbos = new ArrayList<>();
     private List<Integer> textures = new ArrayList<>();
 
     public RawModel loadToVAO(float[] positions, float[] textureCoordinates, int[] indices) {
@@ -84,7 +84,7 @@ public class Loader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+        //GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
 
         // Specify the 2D image data that should be bound to the texture

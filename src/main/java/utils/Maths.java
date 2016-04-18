@@ -21,9 +21,10 @@ public final class Maths {
     public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float scale) {
         // yields an identity matrix, which is column-major, in order to match OpenGL's internal representation.
         Matrix4f matrix = new Matrix4f();
-        matrix.translate(translation);
-        matrix.rotationXYZ(rx, ry, rz);
-        matrix.scale(scale, scale, scale);
+        matrix.translate(translation)
+                .scale(scale)
+                .rotateXYZ(rx, ry, rz);
+
         return matrix;
     }
 }

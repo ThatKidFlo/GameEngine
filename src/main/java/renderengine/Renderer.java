@@ -16,7 +16,7 @@ import utils.Maths;
  */
 public class Renderer {
 
-    private static final float FOV = 70;
+    private static final float FOV = (float) Math.toRadians(70.0f);
     private static final float NEAR_PLANE = 0.1f;
     private static final float FAR_PLANE = 1000f;
 
@@ -31,7 +31,7 @@ public class Renderer {
 
     /**
      * Prepares the viewport for rendering by filling the screen with the background color (here, red), and
-     * then clearing the color buffer bit.
+     * clearing the color buffer bit.
      */
     public void prepare() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -82,7 +82,7 @@ public class Renderer {
         float xScale = yScale / aspectRatio;
         float frustumLength = FAR_PLANE - NEAR_PLANE;
 
-        projectionMatrix = new Matrix4f();
+        projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
         projectionMatrix.m00 = xScale;
         projectionMatrix.m11 = yScale;
         projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustumLength);
