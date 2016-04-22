@@ -1,6 +1,8 @@
 package entities;
 
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
+import renderengine.DisplayManager;
 
 /**
  * Created by ThatKidFlo on 17.04.2016.
@@ -15,11 +17,27 @@ public class Camera {
     // camera rotation about Z axis
     private float roll;
 
-    public Camera() {
+    private static Camera SINGLETON_INSTANCE = new Camera();
+
+    private Camera() {
+
+    }
+
+    public static Camera getInstance() {
+        return SINGLETON_INSTANCE;
     }
 
     public void move() {
-        //TODO: must deal with the new I/O API, and update camera according to input
+        long window = DisplayManager.WINDOW;
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
+            position.z -= 0.02f;
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
+            position.x += 0.02f;
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS) {
+            position.x -= 0.02f;
+        }
     }
 
     public Vector3f getPosition() {
