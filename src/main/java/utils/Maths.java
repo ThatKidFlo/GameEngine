@@ -39,8 +39,7 @@ public final class Maths {
         Vector3f cameraPosition = camera.getPosition();
         Vector3f negativeCameraPosition = new Vector3f(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
 
-        Matrix4f viewMatrix = new Matrix4f();
-        viewMatrix.identity();
+        Matrix4f viewMatrix = new Matrix4f().identity();
         viewMatrix.rotate((float) Math.toRadians(camera.getPitch()), new Vector3f(1, 0, 0))
                 .rotate((float) Math.toRadians(camera.getYaw()), new Vector3f(0, 1, 0))
                 .translate(negativeCameraPosition);

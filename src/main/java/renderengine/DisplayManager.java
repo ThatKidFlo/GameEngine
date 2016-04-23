@@ -3,6 +3,7 @@ package renderengine;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
@@ -16,16 +17,15 @@ public class DisplayManager {
 
     // We need to strongly reference callback instances.
     private static GLFWErrorCallback errorCallback;
-    private static GLFWKeyCallback keyCallback;
+    private static GLFWWindowSizeCallback windowsSizeCallback;
 
     public static long WINDOW = 0;
 
-    public static final int WINDOW_WIDTH = 1280;
-    public static final int WINDOW_HEIGHT = 720;
+    public static int WINDOW_WIDTH = 1280;
+    public static int WINDOW_HEIGHT = 720;
 
     public static void createDisplay() {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-
         if (glfwInit() != GLFW_TRUE) {
             throw new RuntimeException("Failed to init GLFW.");
         }
@@ -39,6 +39,14 @@ public class DisplayManager {
         if (WINDOW == NULL) {
             throw new RuntimeException("Failed to create WINDOW.");
         }
+
+        glfwSetWindowSizeCallback(WINDOW, windowsSizeCallback = new GLFWWindowSizeCallback() {
+            @Override
+            public void invoke(long window, int width, int height) {
+                DisplayManager.WINDOW_WIDTH = width;
+                DisplayManager.WINDOW_HEIGHT = height;
+            }
+        });
 
         GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         glfwSetWindowPos(
@@ -61,9 +69,6 @@ public class DisplayManager {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
-
-        // Map the viewport to the size of the whole window.
-        GL11.glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
 
     public static void updateDisplay() {

@@ -1,23 +1,16 @@
 import entities.Camera;
 import entities.Entity;
+import models.RawModel;
 import models.TexturedModel;
 import org.joml.Vector3f;
-import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.GL;
+import org.lwjgl.glfw.*;
 import renderengine.DisplayManager;
 import renderengine.Loader;
-import models.RawModel;
 import renderengine.Renderer;
 import shaders.StaticShader;
 import textures.ModelTexture;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * Created by ThatKidFlo on 15.04.2016.
@@ -27,6 +20,7 @@ public class GraphicEngine {
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
     private GLFWKeyCallback keyCallback;
+    private GLFWCursorPosCallback cursorPosCallback;
 
     // The window handle
     private long window;
@@ -155,6 +149,7 @@ public class GraphicEngine {
         };
     }
 
+    private int mouseX, mouseY, mouseDX, mouseDY;
     private void initializeIOEvents() {
         glfwSetKeyCallback(DisplayManager.WINDOW, keyCallback = new GLFWKeyCallback() {
             @Override
@@ -164,13 +159,27 @@ public class GraphicEngine {
                 }
             }
         });
+
+        //TODO:: complete handling mouse input, by rotating camera.
+        mouseX = mouseY = mouseDX = mouseDY = 0;
+        glfwSetCursorPosCallback(window, cursorPosCallback = new GLFWCursorPosCallback(){
+            @Override
+            public void invoke(long window, double xpos, double ypos) {
+                // Add delta of x and y mouse coordinates
+                mouseDX += (int)xpos - mouseX;
+                mouseDY += (int)xpos - mouseY;
+                // Set new positions of x and y
+                mouseX = (int) xpos;
+                mouseY = (int) ypos;
+            }
+        });
     }
 
     public void gameLoop() {
         while (glfwWindowShouldClose(DisplayManager.WINDOW) == GLFW_FALSE) {
             camera.move();
-            entity.increasePosition(0.0f, 0.0f, -1.f);
-            entity.increaseRotation(0.025f, 0f, 0.025f);
+        //    entity.increasePosition(0.0f, 0.0f, -1.f);
+        //    entity.increaseRotation(0.025f, 0f, 0.025f);
             renderer.prepare();
             shader.start();
             shader.loadViewMatrix(camera);

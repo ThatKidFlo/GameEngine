@@ -36,6 +36,8 @@ public class Renderer {
     public void prepare() {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        // Map the viewport to the size of the whole window.
+        GL11.glViewport(0, 0, DisplayManager.WINDOW_WIDTH, DisplayManager.WINDOW_HEIGHT);
         GL11.glClearColor(1, 0, 0, 1);
     }
 
