@@ -6,6 +6,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.*;
 import renderengine.DisplayManager;
 import renderengine.Loader;
+import renderengine.OBJLoader;
 import renderengine.Renderer;
 import shaders.StaticShader;
 import textures.ModelTexture;
@@ -21,9 +22,8 @@ public class GraphicEngine {
     private GLFWErrorCallback errorCallback;
     private GLFWKeyCallback keyCallback;
     private GLFWCursorPosCallback cursorPosCallback;
+    private int mouseX, mouseY, mouseDX, mouseDY;
 
-    // The window handle
-    private long window;
     private RawModel model;
     private ModelTexture texture;
     private TexturedModel staticModel;
@@ -43,14 +43,15 @@ public class GraphicEngine {
         renderer = new Renderer(shader);
         camera = Camera.getInstance();
 
-        initializeCubeModelData();
+        //initializeCubeModelData();
+        model = OBJLoader.loadObjModel("sphere",loader);
 
-        model = loader.loadToVAO(vertices, textureCoordinates, indices);
-        texture = new ModelTexture(loader.loadTexture("image"));
+        //model = loader.loadToVAO(vertices, textureCoordinates, indices);
+        texture = new ModelTexture(loader.loadTexture("earth"));
         staticModel = new TexturedModel(model, texture);
         entity = new Entity(staticModel, new Vector3f(0, 0, -5), 0, 0, 0, 1.0f);
 
-        // initializeIOEvents();
+        initializeIOEvents();
         return this;
     }
 
@@ -149,7 +150,6 @@ public class GraphicEngine {
         };
     }
 
-    private int mouseX, mouseY, mouseDX, mouseDY;
     private void initializeIOEvents() {
         glfwSetKeyCallback(DisplayManager.WINDOW, keyCallback = new GLFWKeyCallback() {
             @Override
@@ -162,7 +162,7 @@ public class GraphicEngine {
 
         //TODO:: complete handling mouse input, by rotating camera.
         mouseX = mouseY = mouseDX = mouseDY = 0;
-        glfwSetCursorPosCallback(window, cursorPosCallback = new GLFWCursorPosCallback(){
+        glfwSetCursorPosCallback(DisplayManager.WINDOW, cursorPosCallback = new GLFWCursorPosCallback(){
             @Override
             public void invoke(long window, double xpos, double ypos) {
                 // Add delta of x and y mouse coordinates
@@ -179,7 +179,7 @@ public class GraphicEngine {
         while (glfwWindowShouldClose(DisplayManager.WINDOW) == GLFW_FALSE) {
             camera.move();
         //    entity.increasePosition(0.0f, 0.0f, -1.f);
-        //    entity.increaseRotation(0.025f, 0f, 0.025f);
+            entity.increaseRotation(0.01f, 0.01f, 0f);
             renderer.prepare();
             shader.start();
             shader.loadViewMatrix(camera);

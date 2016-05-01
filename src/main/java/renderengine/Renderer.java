@@ -16,7 +16,7 @@ import utils.Maths;
  */
 public class Renderer {
 
-    private static final float FOV = (float) Math.toRadians(70.0f);
+    private static final float FOV = (float) Math.toRadians(90.0f);
     private static final float NEAR_PLANE = 0.1f;
     private static final float FAR_PLANE = 1000f;
 
@@ -38,7 +38,7 @@ public class Renderer {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         // Map the viewport to the size of the whole window.
         GL11.glViewport(0, 0, DisplayManager.WINDOW_WIDTH, DisplayManager.WINDOW_HEIGHT);
-        GL11.glClearColor(1, 0, 0, 1);
+        GL11.glClearColor(0, 0, 0, 1);
     }
 
     public void render(Entity entity, StaticShader shader) {
@@ -80,7 +80,7 @@ public class Renderer {
     }
 
     private void createProjectionMatrix() {
-        float aspectRatio = DisplayManager.WINDOW_WIDTH / DisplayManager.WINDOW_HEIGHT;
+        float aspectRatio = (float) DisplayManager.WINDOW_WIDTH / (float) DisplayManager.WINDOW_HEIGHT;
         float yScale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
         float xScale = yScale / aspectRatio;
         float frustumLength = FAR_PLANE - NEAR_PLANE;
