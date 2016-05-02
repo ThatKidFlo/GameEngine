@@ -12,6 +12,7 @@ import renderengine.DisplayManager;
 import renderengine.Loader;
 import renderengine.MasterRenderer;
 import renderengine.OBJLoader;
+import terrains.Terrain;
 import textures.ModelTexture;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -27,12 +28,15 @@ public class GraphicEngine {
     private GLFWCursorPosCallback cursorPosCallback;
     private int mouseX, mouseY, mouseDX, mouseDY;
 
+    /******************************************MODELS AND ENTITIES******************************************/
     private RawModel model;
     private ModelTexture texture;
     private TexturedModel staticModel;
     private Entity entity;
-    private Loader loader;
+    private Terrain terrain, terrain1;
 
+    /******************************************ENGINE AND LIGHTS******************************************/
+    private Loader loader;
     private Camera camera;
     private Light light;
     private MasterRenderer renderer;
@@ -45,17 +49,25 @@ public class GraphicEngine {
     private float[] textureCoordinates;
 
     public GraphicEngine initialize() {
+        /******************************************ENGINE AND LIGHTS******************************************/
         DisplayManager.createDisplay();
         loader = new Loader();
-        renderer = new MasterRenderer();
         camera = Camera.getInstance();
+        light = new Light(new Vector3f(2000,2000,2000), new Vector3f(1, 1, 1));
+        renderer = new MasterRenderer();
+
+        /******************************************MODELS AND ENTITIES******************************************/
         model = OBJLoader.loadObjModel("dragon", loader);
         texture = new ModelTexture(loader.loadTexture("orange"));
         texture.setShineDamper(10);
         texture.setReflectivity(1);
         staticModel = new TexturedModel(model, texture);
         entity = new Entity(staticModel, new Vector3f(0, 0, -50), 0, 0, 0, 1.0f);
-        light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
+        terrain = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("earth")));
+        terrain1 = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("grass")));
+
+
+        /******************************************I/O INITIALIZATION******************************************/
         initializeIOEvents();
         return this;
     }
@@ -186,6 +198,8 @@ public class GraphicEngine {
         while (glfwWindowShouldClose(DisplayManager.WINDOW) == GLFW_FALSE) {
             camera.move();
             //entity.increaseRotation(0.01f, 0.01f, 0f);
+            renderer.processTerrain(terrain);
+            renderer.processTerrain(terrain1);
             renderer.processEntity(entity);
             renderer.render(light, camera);
             DisplayManager.updateDisplay();

@@ -20,38 +20,16 @@ import java.util.Map;
 /**
  * Created by ThatKidFlo on 15.04.2016.
  */
-public class Renderer {
+public class EntityRenderer {
 
-    private static final float FOV = (float) Math.toRadians(90.0f);
-    private static final float NEAR_PLANE = 0.1f;
-    private static final float FAR_PLANE = 1000f;
-
-    private Matrix4f projectionMatrix;
     private StaticShader shader;
 
-    public Renderer(StaticShader shader) {
+    public EntityRenderer(StaticShader shader, Matrix4f projectionMatrix) {
         this.shader = shader;
 
-        // Disable rendering of faces pointing away from the camera
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glCullFace(GL11.GL_BACK);
-
-        createProjectionMatrix();
         shader.start();
         shader.loadProjectionMatrix(projectionMatrix);
         shader.stop();
-    }
-
-    /**
-     * Prepares the viewport for rendering by filling the screen with the background color (here, red), and
-     * clearing the color buffer bit.
-     */
-    public void prepare() {
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        // Map the viewport to the size of the whole window.
-        GL11.glViewport(0, 0, DisplayManager.WINDOW_WIDTH, DisplayManager.WINDOW_HEIGHT);
-        GL11.glClearColor(0, 0, 0, 1);
     }
 
     public void render(Map<TexturedModel, List<Entity>> entities) {
@@ -180,20 +158,5 @@ public class Renderer {
 
         // Unbind the VAO
         GL30.glBindVertexArray(0);
-    }
-
-    private void createProjectionMatrix() {
-        float aspectRatio = (float) DisplayManager.WINDOW_WIDTH / (float) DisplayManager.WINDOW_HEIGHT;
-        float yScale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
-        float xScale = yScale / aspectRatio;
-        float frustumLength = FAR_PLANE - NEAR_PLANE;
-
-        projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
-        projectionMatrix.m00 = xScale;
-        projectionMatrix.m11 = yScale;
-        projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustumLength);
-        projectionMatrix.m23 = -1;
-        projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustumLength);
-        projectionMatrix.m33 = 0;
     }
 }
