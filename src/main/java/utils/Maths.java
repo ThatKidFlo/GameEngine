@@ -10,14 +10,14 @@ import org.joml.Vector3f;
 public final class Maths {
 
     /**
-     * Will create a 4x4 matrix of floats, describing the transformations passed as parameters.
+     * Will create a {@link Matrix4f}, describing the transformations passed as parameters.
      *
-     * @param translation - a Vector3f describing translation about XYZ.
+     * @param translation - a {@link Vector3f}, describing translation about XYZ.
      * @param rx          - float, representing rotation about the X axis.
      * @param ry          - float, representing rotation about the Y axis.
      * @param rz          - float, representing rotation about the Z axis.
      * @param scale       - float, representing the scale of the transformation.
-     * @return - a Matrix4f, describing the transformations to be applied.
+     * @return - a {@link Matrix4f}, describing the transformations to be applied.
      */
     public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float scale) {
         // yields an identity matrix, which is column-major, in order to match OpenGL's internal representation.
@@ -30,8 +30,8 @@ public final class Maths {
     /**
      * Creates the view matrix corresponding to the position, and orientation of the camera passed in as a parameter.
      *
-     * @param camera - the destination camera, whose view matrix will be returned
-     * @return - the view matrix, as a Matrix4f
+     * @param camera - the target {@link Camera}, whose view matrix will be returned.
+     * @return - the view matrix, as a {@link Matrix4f}.
      */
     public static Matrix4f createViewMatrix(Camera camera) {
         Vector3f cameraPosition = camera.getPosition();

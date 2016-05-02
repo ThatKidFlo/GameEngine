@@ -26,6 +26,8 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class Loader {
 
+    public static final String RESOURCES_FOLDER = "deps/";
+
     /**
      * These two fields are for memory management purposes (i.e. they keep track of
      * the VAOs, and VBOs that have been allocated, in order to be able to properly
@@ -56,7 +58,7 @@ public class Loader {
         int height = 0;
         int width = 0;
         try {
-            InputStream in = new FileInputStream("res/" + fileName + ".png");
+            InputStream in = new FileInputStream(RESOURCES_FOLDER + fileName + ".png");
             PNGDecoder decoder = new PNGDecoder(in);
             height = decoder.getHeight();
             width = decoder.getWidth();

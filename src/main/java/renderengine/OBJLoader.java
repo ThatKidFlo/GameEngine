@@ -39,7 +39,7 @@ public class OBJLoader {
     public static RawModel loadObjModel(String filename, Loader loader) {
         FileReader fr = null;
         try {
-            fr = new FileReader(new File("res/" + filename + ".obj"));
+            fr = new FileReader(new File(Loader.RESOURCES_FOLDER + filename + ".obj"));
         } catch (FileNotFoundException e) {
             System.err.println("Error loading .OBJ file!");
             e.printStackTrace();

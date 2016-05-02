@@ -70,13 +70,13 @@ public class Renderer {
     }
 
     /**
-     * Prepares a textured model for rendering, by binding the VAO of the model to be rendered, and enabling the
+     * Prepares a {@link TexturedModel}  for rendering, by binding the VAO of the model to be rendered, and enabling the
      * vertex attribute arrays at index 0, 1, and 2. They contain, respectively:
      * 0: the positional data, (XYZ, floats).
      * 1: the texture data,  (UV, flotas).
      * 2: the normal vectors (XYZ, floats).
      *
-     * @param model
+     * @param model - the {@link TexturedModel} to be prepared for rendering
      */
     private void prepareTexturedModel(TexturedModel model) {
         RawModel rawModel = model.getRawModel();
@@ -111,10 +111,10 @@ public class Renderer {
     }
 
     /**
-     * Prepares the entity instance passed as parameter for rendering, by creating a transformation matrix from the
-     * current state of the entity, and then loading it into the shader program.
+     * Prepares the {@link Entity} instance passed as parameter for rendering, by creating a transformation matrix
+     * from the current state of the {@link Entity}, and then loading it into the shader program.
      *
-     * @param entity - the entity to prepare for rendering.
+     * @param entity - the {@link Entity} to prepare for rendering.
      */
     private void prepareInstance(Entity entity) {
         shader.loadTransformationMatrix(
@@ -129,12 +129,12 @@ public class Renderer {
     }
 
     /**
-     * This method is now DEPRECATED. It represents the old rendering technique, where this method, and all the
-     * preparations it implies would be called once PER entity (which means a lot of overhead). It has been
+     * This method is now {@link Deprecated}. It represents the old rendering technique, where this method, and all the
+     * preparations it implies would be called once PER {@link Entity} (implying means a lot of overhead). It has been
      * superseded by methods exposed by the {@link MasterRenderer}, namely {@link MasterRenderer#render(Light, Camera)}.
      *
-     * @param entity - the entity to prepare for rendering.
-     * @param shader - the shader program to use for rendering this entity.
+     * @param entity - the {@link Entity} to prepare for rendering.
+     * @param shader - the {@link StaticShader} program to use for rendering this entity.
      */
     @Deprecated
     public void render(Entity entity, StaticShader shader) {
