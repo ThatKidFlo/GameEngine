@@ -1,14 +1,17 @@
 import entities.Camera;
 import entities.Entity;
+import entities.Light;
 import models.RawModel;
 import models.TexturedModel;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.*;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCursorPosCallback;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWKeyCallback;
 import renderengine.DisplayManager;
 import renderengine.Loader;
+import renderengine.MasterRenderer;
 import renderengine.OBJLoader;
-import renderengine.Renderer;
-import shaders.StaticShader;
 import textures.ModelTexture;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -29,32 +32,35 @@ public class GraphicEngine {
     private TexturedModel staticModel;
     private Entity entity;
     private Loader loader;
-    private StaticShader shader;
-    private Renderer renderer;
+
     private Camera camera;
-    float[] vertices;
-    int[] indices;
-    float[] textureCoordinates;
+    private Light light;
+    private MasterRenderer renderer;
+
+    @Deprecated
+    private float[] vertices;
+    @Deprecated
+    private int[] indices;
+    @Deprecated
+    private float[] textureCoordinates;
 
     public GraphicEngine initialize() {
         DisplayManager.createDisplay();
         loader = new Loader();
-        shader = new StaticShader();
-        renderer = new Renderer(shader);
+        renderer = new MasterRenderer();
         camera = Camera.getInstance();
-
-        //initializeCubeModelData();
-        model = OBJLoader.loadObjModel("sphere",loader);
-
-        //model = loader.loadToVAO(vertices, textureCoordinates, indices);
-        texture = new ModelTexture(loader.loadTexture("earth"));
+        model = OBJLoader.loadObjModel("dragon", loader);
+        texture = new ModelTexture(loader.loadTexture("orange"));
+        texture.setShineDamper(10);
+        texture.setReflectivity(1);
         staticModel = new TexturedModel(model, texture);
-        entity = new Entity(staticModel, new Vector3f(0, 0, -5), 0, 0, 0, 1.0f);
-
+        entity = new Entity(staticModel, new Vector3f(0, 0, -50), 0, 0, 0, 1.0f);
+        light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
         initializeIOEvents();
         return this;
     }
 
+    @Deprecated
     private void initializeQuadModelData() {
         vertices = new float[]{
                 -0.5f, 0.5f, -1.05f,
@@ -74,6 +80,7 @@ public class GraphicEngine {
         };
     }
 
+    @Deprecated
     private void initializeCubeModelData() {
         vertices = new float[]{
                 -0.5f, 0.5f, -0.5f,
@@ -162,12 +169,12 @@ public class GraphicEngine {
 
         //TODO:: complete handling mouse input, by rotating camera.
         mouseX = mouseY = mouseDX = mouseDY = 0;
-        glfwSetCursorPosCallback(DisplayManager.WINDOW, cursorPosCallback = new GLFWCursorPosCallback(){
+        glfwSetCursorPosCallback(DisplayManager.WINDOW, cursorPosCallback = new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
                 // Add delta of x and y mouse coordinates
-                mouseDX += (int)xpos - mouseX;
-                mouseDY += (int)xpos - mouseY;
+                mouseDX += (int) xpos - mouseX;
+                mouseDY += (int) xpos - mouseY;
                 // Set new positions of x and y
                 mouseX = (int) xpos;
                 mouseY = (int) ypos;
@@ -178,20 +185,16 @@ public class GraphicEngine {
     public void gameLoop() {
         while (glfwWindowShouldClose(DisplayManager.WINDOW) == GLFW_FALSE) {
             camera.move();
-        //    entity.increasePosition(0.0f, 0.0f, -1.f);
-            entity.increaseRotation(0.01f, 0.01f, 0f);
-            renderer.prepare();
-            shader.start();
-            shader.loadViewMatrix(camera);
-            renderer.render(entity, shader);
-            shader.stop();
+            //entity.increaseRotation(0.01f, 0.01f, 0f);
+            renderer.processEntity(entity);
+            renderer.render(light, camera);
             DisplayManager.updateDisplay();
         }
         stop();
     }
 
     private void stop() {
-        shader.cleanup();
+        renderer.cleanup();
         loader.cleanup();
         DisplayManager.closeDisplay();
     }

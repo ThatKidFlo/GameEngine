@@ -50,7 +50,14 @@ public class Camera {
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
             position.z += 1f;
         }
+    }
 
+    public void increasePitch(float pitch) {
+        this.pitch += pitch;
+    }
+
+    public void increaseYaw(float yaw) {
+        this.yaw += yaw;
     }
 
     public Vector3f getPosition() {

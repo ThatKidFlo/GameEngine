@@ -35,11 +35,12 @@ public class Loader {
     private List<Integer> vbos = new ArrayList<>();
     private List<Integer> textures = new ArrayList<>();
 
-    public RawModel loadToVAO(float[] positions, float[] textureCoordinates, int[] indices) {
+    public RawModel loadToVAO(float[] positions, float[] textureCoordinates, float[] normals, int[] indices) {
         int vaoID = createVAO();
         bindIndicesBuffer(indices);
         storeDataInAttributeList(0, 3, positions);
         storeDataInAttributeList(1, 2, textureCoordinates);
+        storeDataInAttributeList(2, 3, normals);
         unbindVAO();
         return new RawModel(vaoID, indices.length);
     }
@@ -74,24 +75,21 @@ public class Loader {
         int textureID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, textureID);
 
-        // This will wrap the textures.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         GL30.glGenerateMipmap(textureID);
-
-        // Sharp filtering, for now
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
         //GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-
 
         // Specify the 2D image data that should be bound to the texture
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
         // Bind the texture to its id.
-        glBindTexture(GL_TEXTURE_2D, textureID);
+       // glBindTexture(GL_TEXTURE_2D, textureID);
+        // This will wrap the textures.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // Sharp filtering, for now
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         // Keep track of the texture, for cleanup purposes.
         textures.add(textureID);
