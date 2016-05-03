@@ -31,24 +31,24 @@ public class Camera {
         long window = DisplayManager.WINDOW;
 
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
-            position.x += 0.02f;
+            position.x += 0.2f;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS) {
-            position.x -= 0.02f;
+            position.x -= 0.2f;
         }
 
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS) {
-            position.y -= 0.01f;
+            position.y -= 0.2f;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
-            position.y += 0.01f;
+            position.y += 0.2f;
         }
 
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
-            position.z -= 1f;
+            position.z -= 10f;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
-            position.z += 1f;
+            position.z += 10f;
         }
     }
 

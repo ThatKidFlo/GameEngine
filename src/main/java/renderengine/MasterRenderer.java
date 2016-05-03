@@ -26,7 +26,7 @@ public class MasterRenderer {
 
     private static final float FOV = (float) Math.toRadians(90.0f);
     private static final float NEAR_PLANE = 0.1f;
-    private static final float FAR_PLANE = 1000f;
+    private static final float FAR_PLANE = 3000f;
 
     private Matrix4f projectionMatrix;
 
@@ -41,11 +41,19 @@ public class MasterRenderer {
 
     public MasterRenderer() {
         // Disable rendering of faces pointing away from the camera
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glCullFace(GL11.GL_BACK);
+        enableCulling();
         createProjectionMatrix();
         renderer = new EntityRenderer(shader, projectionMatrix);
         terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+    }
+
+    public static void enableCulling() {
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glCullFace(GL11.GL_BACK);
+    }
+
+    public static void disableCulling() {
+        GL11.glDisable(GL11.GL_CULL_FACE);
     }
 
     /**
@@ -78,8 +86,7 @@ public class MasterRenderer {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         // Map the viewport to the size of the whole window.
-        GL11.glViewport(0, 0, DisplayManager.WINDOW_WIDTH, DisplayManager.WINDOW_HEIGHT);
-        GL11.glClearColor(0, 0, 0, 1);
+        GL11.glClearColor(1, 1, 0, 1);
     }
 
     /**

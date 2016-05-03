@@ -48,6 +48,7 @@ public class DisplayManager {
             public void invoke(long window, int width, int height) {
                 DisplayManager.WINDOW_WIDTH = width;
                 DisplayManager.WINDOW_HEIGHT = height;
+                GL11.glViewport(0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
             }
         });
 

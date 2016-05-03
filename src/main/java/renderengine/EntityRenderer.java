@@ -71,6 +71,11 @@ public class EntityRenderer {
         // Position 2 contains the normal coordinates of each vertex.
         GL20.glEnableVertexAttribArray(2);
         ModelTexture texture = model.getTexture();
+
+        if(texture.isHasTransparency()) {
+            MasterRenderer.disableCulling();
+        }
+        shader.loadFakeLightingVariable(texture.isUseFakeLighting());
         shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
 
         // Must activate texture bank 0, since the sampler2D from the fragment shader uses this bank by default.
@@ -80,6 +85,7 @@ public class EntityRenderer {
     }
 
     private void unbindTexturedModel() {
+        MasterRenderer.enableCulling();
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);
         GL20.glDisableVertexAttribArray(2);

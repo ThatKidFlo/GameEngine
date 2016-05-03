@@ -15,6 +15,10 @@ import renderengine.OBJLoader;
 import terrains.Terrain;
 import textures.ModelTexture;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
@@ -28,14 +32,18 @@ public class GraphicEngine {
     private GLFWCursorPosCallback cursorPosCallback;
     private int mouseX, mouseY, mouseDX, mouseDY;
 
-    /******************************************MODELS AND ENTITIES******************************************/
+    /******************************************
+     * MODELS AND ENTITIES
+     ******************************************/
     private RawModel model;
     private ModelTexture texture;
-    private TexturedModel staticModel;
-    private Entity entity;
+    private TexturedModel staticModel, grass, fern;
+    private List<Entity> entities;
     private Terrain terrain, terrain1;
 
-    /******************************************ENGINE AND LIGHTS******************************************/
+    /******************************************
+     * ENGINE AND LIGHTS
+     ******************************************/
     private Loader loader;
     private Camera camera;
     private Light light;
@@ -53,19 +61,31 @@ public class GraphicEngine {
         DisplayManager.createDisplay();
         loader = new Loader();
         camera = Camera.getInstance();
-        light = new Light(new Vector3f(2000,2000,2000), new Vector3f(1, 1, 1));
+        light = new Light(new Vector3f(20000, 20000, 20000), new Vector3f(1, 1, 1));
         renderer = new MasterRenderer();
 
         /******************************************MODELS AND ENTITIES******************************************/
-        model = OBJLoader.loadObjModel("dragon", loader);
-        texture = new ModelTexture(loader.loadTexture("orange"));
-        texture.setShineDamper(10);
-        texture.setReflectivity(1);
+        model = OBJLoader.loadObjModel("tree", loader);
+        texture = new ModelTexture(loader.loadTexture("tree"));
         staticModel = new TexturedModel(model, texture);
-        entity = new Entity(staticModel, new Vector3f(0, 0, -50), 0, 0, 0, 1.0f);
-        terrain = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("earth")));
-        terrain1 = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("grass")));
+        grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture
+                ("grassTexture")));
+        grass.getTexture().setHasTransparency(true);
+        grass.getTexture().setUseFakeLighting(true);
+        fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), new ModelTexture(loader.loadTexture
+                ("fern")));
+        fern.getTexture().setHasTransparency(true);
+        fern.getTexture().setUseFakeLighting(true);
+        //  entity = new Entity(staticModel, new Vector3f(0, 0, -50), 0, 0, 0, 1.0f);
+        terrain = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("grass")));
+        //terrain1 = new Terrain(1, 0, loader, new ModelTexture(loader.loadTexture("grass1")));
 
+        entities = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < 500; i++) {
+            entities.add(new Entity(staticModel, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 3));
+            entities.add(new Entity(grass, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 1));
+            entities.add(new Entity(fern, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 0.6f));}
 
         /******************************************I/O INITIALIZATION******************************************/
         initializeIOEvents();
@@ -199,8 +219,8 @@ public class GraphicEngine {
             camera.move();
             //entity.increaseRotation(0.01f, 0.01f, 0f);
             renderer.processTerrain(terrain);
-            renderer.processTerrain(terrain1);
-            renderer.processEntity(entity);
+           // renderer.processTerrain(terrain1);
+            entities.stream().forEach((entity) -> renderer.processEntity(entity));
             renderer.render(light, camera);
             DisplayManager.updateDisplay();
         }
