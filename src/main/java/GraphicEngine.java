@@ -76,9 +76,8 @@ public class GraphicEngine {
                 ("fern")));
         fern.getTexture().setHasTransparency(true);
         fern.getTexture().setUseFakeLighting(true);
-        //  entity = new Entity(staticModel, new Vector3f(0, 0, -50), 0, 0, 0, 1.0f);
-        terrain = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("grass")));
-        //terrain1 = new Terrain(1, 0, loader, new ModelTexture(loader.loadTexture("grass1")));
+        terrain = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("grass")));
+        terrain1 = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("grass1")));
 
         entities = new ArrayList<>();
         Random random = new Random();
@@ -207,9 +206,15 @@ public class GraphicEngine {
                 // Add delta of x and y mouse coordinates
                 mouseDX += (int) xpos - mouseX;
                 mouseDY += (int) xpos - mouseY;
+                if(mouseX < xpos) {
+                    camera.increaseYaw(mouseDX * 0.001f);
+                } else {
+                    camera.increaseYaw(mouseDX * -0.001f);
+                }
                 // Set new positions of x and y
                 mouseX = (int) xpos;
                 mouseY = (int) ypos;
+
             }
         });
     }
@@ -219,7 +224,7 @@ public class GraphicEngine {
             camera.move();
             //entity.increaseRotation(0.01f, 0.01f, 0f);
             renderer.processTerrain(terrain);
-           // renderer.processTerrain(terrain1);
+            renderer.processTerrain(terrain1);
             entities.stream().forEach((entity) -> renderer.processEntity(entity));
             renderer.render(light, camera);
             DisplayManager.updateDisplay();

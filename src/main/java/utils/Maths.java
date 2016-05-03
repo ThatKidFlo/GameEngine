@@ -38,7 +38,7 @@ public final class Maths {
         Vector3f negativeCameraPosition = new Vector3f(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
 
         return new Matrix4f()
-                .rotateXYZ(camera.getPitch(), camera.getYaw(), 0.0f)
+                .rotateXYZ((float)Math.toRadians(camera.getPitch()), (float)Math.toRadians(camera.getYaw()), 0.0f)
                 .translate(negativeCameraPosition);
     }
 }

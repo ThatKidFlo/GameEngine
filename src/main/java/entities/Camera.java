@@ -43,12 +43,11 @@ public class Camera {
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
             position.y += 0.2f;
         }
-
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
-            position.z -= 10f;
+            position.z -= 0.2f;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
-            position.z += 10f;
+            position.z += 0.2f;
         }
     }
 
