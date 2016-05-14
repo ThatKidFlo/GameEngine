@@ -3,10 +3,7 @@ package renderengine;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import models.RawModel;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 
 /**
  * Created by ThatKidFlo on 15.04.2016.
@@ -83,9 +81,8 @@ public class Loader {
 
         // Specify the 2D image data that should be bound to the texture
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
         // Bind the texture to its id.
-       // glBindTexture(GL_TEXTURE_2D, textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
         // This will wrap the textures.
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -93,16 +90,12 @@ public class Loader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+        // add anisotropic filtering to the texture which is currently active
+        GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+
         // Keep track of the texture, for cleanup purposes.
         textures.add(textureID);
         return textureID;
-
-        /* This would be an alternative to all the above, which will decode PNG files.
-        Texture texture = new Texture("res/" + fileName + ".png");
-        textures.add(texture.getTextureID());
-
-        return texture.getTextureID();
-        */
     }
 
     public void cleanup() {
