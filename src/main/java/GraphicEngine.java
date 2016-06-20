@@ -14,6 +14,8 @@ import renderengine.MasterRenderer;
 import renderengine.OBJLoader;
 import terrains.Terrain;
 import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +68,6 @@ public class GraphicEngine {
 
         /******************************************MODELS AND ENTITIES******************************************/
         model = OBJLoader.loadObjModel("tree", loader);
-
         texture = new ModelTexture(loader.loadTexture("tree"));
         staticModel = new TexturedModel(model, texture);
         grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
@@ -75,8 +76,17 @@ public class GraphicEngine {
         fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
         fern.getTexture().setHasTransparency(true);
         fern.getTexture().setUseFakeLighting(true);
-        terrain = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("grass")));
-        terrain1 = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("grass1")));
+
+        TerrainTexture grass_texture = new TerrainTexture(loader.loadTexture("grass_1"));
+        TerrainTexture rocks_texture = new TerrainTexture(loader.loadTexture("stones1"));
+        TerrainTexture dirt_texture = new TerrainTexture(loader.loadTexture("dirt1"));
+        TerrainTexture grass_texture1 = new TerrainTexture(loader.loadTexture("grass1"));
+        TerrainTexture blendmap = new TerrainTexture(loader.loadTexture("blendmap"));
+
+        TerrainTexturePack texturePack = new TerrainTexturePack(grass_texture, rocks_texture, dirt_texture, grass_texture1);
+
+        terrain = new Terrain(0, -1, loader, texturePack, blendmap);
+        terrain1 = new Terrain(-1, -1, loader, texturePack, blendmap);
 
         entities = new ArrayList<>();
         Random random = new Random();

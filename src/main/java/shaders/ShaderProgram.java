@@ -90,10 +90,19 @@ public abstract class ShaderProgram {
     }
 
     /**
+     * Method that loads an int uniform variable into the shaders.
+     * @param location - the uniform location to load to.
+     * @param value - the integer value to load.
+     */
+    protected void loadInt(int location, int value) {
+        GL20.glUniform1i(location, value);
+    }
+
+    /**
      * Method that loads a float uniform variable into the vertex shader.
      *
-     * @param location -
-     * @param value
+     * @param location - the name of the uniform variable to load to.
+     * @param value - the value to load
      */
     protected void loadFloat(int location, float value) {
         GL20.glUniform1f(location, value);

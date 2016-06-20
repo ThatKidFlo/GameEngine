@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL30;
 import shaders.TerrainShader;
 import terrains.Terrain;
 import textures.ModelTexture;
+import textures.TerrainTexturePack;
 import utils.Maths;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class TerrainRenderer {
         this.shader = shader;
         shader.start();
         shader.loadProjectionMatrix(projectionMatrix);
+        shader.connectTextureUnits();
         shader.stop();
     }
 
@@ -64,13 +66,24 @@ public class TerrainRenderer {
 
         // Position 2 contains the normal coordinates of each vertex.
         GL20.glEnableVertexAttribArray(2);
-        ModelTexture texture = terrain.getTexture();
-        shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
 
-        // Must activate texture bank 0, since the sampler2D from the fragment shader uses this bank by default.
-        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getID());
+        bindTextures(terrain);
+        shader.loadShineVariables(1, 0);
+    }
 
+    private void bindTexture(int textureID, int where) {
+        GL13.glActiveTexture(where);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+    }
+
+    private void bindTextures(Terrain terrain) {
+        final TerrainTexturePack texturePack = terrain.getTexturePack();
+
+        bindTexture(texturePack.getBackgroundTexture().getTextureID(), GL13.GL_TEXTURE0);
+        bindTexture(texturePack.getRedTexture().getTextureID(), GL13.GL_TEXTURE1);
+        bindTexture(texturePack.getGreenTexture().getTextureID(), GL13.GL_TEXTURE2);
+        bindTexture(texturePack.getBlueTexture().getTextureID(), GL13.GL_TEXTURE3);
+        bindTexture(terrain.getBlendmap().getTextureID(), GL13.GL_TEXTURE4);
     }
 
     private void unbindTexturedModel() {
