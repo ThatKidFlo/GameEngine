@@ -66,14 +66,13 @@ public class GraphicEngine {
 
         /******************************************MODELS AND ENTITIES******************************************/
         model = OBJLoader.loadObjModel("tree", loader);
+
         texture = new ModelTexture(loader.loadTexture("tree"));
         staticModel = new TexturedModel(model, texture);
-        grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture
-                ("grassTexture")));
+        grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
         grass.getTexture().setHasTransparency(true);
         grass.getTexture().setUseFakeLighting(true);
-        fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), new ModelTexture(loader.loadTexture
-                ("fern")));
+        fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
         fern.getTexture().setHasTransparency(true);
         fern.getTexture().setUseFakeLighting(true);
         terrain = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("grass")));
@@ -84,7 +83,8 @@ public class GraphicEngine {
         for (int i = 0; i < 500; i++) {
             entities.add(new Entity(staticModel, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 3));
             entities.add(new Entity(grass, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 1));
-            entities.add(new Entity(fern, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 0.6f));}
+            entities.add(new Entity(fern, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 0.6f));
+        }
 
         /******************************************I/O INITIALIZATION******************************************/
         initializeIOEvents();
@@ -206,7 +206,7 @@ public class GraphicEngine {
                 // Add delta of x and y mouse coordinates
                 mouseDX += (int) xpos - mouseX;
                 mouseDY += (int) xpos - mouseY;
-                if(mouseX < xpos) {
+                if (mouseX < xpos) {
                     camera.increaseYaw(mouseDX * 0.001f);
                 } else {
                     camera.increaseYaw(mouseDX * -0.001f);
