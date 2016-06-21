@@ -9,9 +9,10 @@ import renderengine.DisplayManager;
  */
 public class Camera {
 
+    private static final float MOVEMENT_SPEED = 2.0f;
     private Vector3f position = new Vector3f(0, 0, 0);
     // camera rotation about X axis
-    private float pitch;
+    private float pitch = 90.0f;
     // camera rotation about Y axis
     private float yaw;
     // camera rotation about Z axis
@@ -31,23 +32,23 @@ public class Camera {
         long window = DisplayManager.WINDOW;
 
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
-            position.x += 0.2f;
+            position.x += MOVEMENT_SPEED;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS) {
-            position.x -= 0.2f;
+            position.x -= MOVEMENT_SPEED;
         }
 
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS) {
-            position.y -= 0.2f;
+            position.y -= MOVEMENT_SPEED;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
-            position.y += 0.2f;
+            position.y += MOVEMENT_SPEED;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
-            position.z -= 0.2f;
+            position.z -= MOVEMENT_SPEED;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
-            position.z += 0.2f;
+            position.z += MOVEMENT_SPEED;
         }
     }
 

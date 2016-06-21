@@ -9,11 +9,11 @@ in float visibility;
 
 out vec4 out_colour;
 
-layout(location = 0) uniform sampler2D backgroundTexture;
-layout(location = 1) uniform sampler2D redTexture;
-layout(location = 2) uniform sampler2D greenTexture;
-layout(location = 3) uniform sampler2D blueTexture;
-layout(location = 4) uniform sampler2D blendmap;
+uniform sampler2D backgroundTexture;
+uniform sampler2D redTexture;
+uniform sampler2D greenTexture;
+uniform sampler2D blueTexture;
+uniform sampler2D blendmap;
 
 uniform vec3 lightColour;
 uniform float shineDamper;

@@ -203,7 +203,7 @@ public class GraphicEngine {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
-                    glfwSetWindowShouldClose(DisplayManager.WINDOW, GLFW.GLFW_TRUE);
+                    glfwSetWindowShouldClose(DisplayManager.WINDOW, true);
                 }
             }
         });
@@ -230,7 +230,7 @@ public class GraphicEngine {
     }
 
     public void gameLoop() {
-        while (glfwWindowShouldClose(DisplayManager.WINDOW) == GLFW_FALSE) {
+        while (!glfwWindowShouldClose(DisplayManager.WINDOW)) {
             camera.move();
             //entity.increaseRotation(0.01f, 0.01f, 0f);
             renderer.processTerrain(terrain);
