@@ -12,11 +12,13 @@ public class Camera {
     private static final float MOVEMENT_SPEED = 2.0f;
     private Vector3f position = new Vector3f(0, 0, 0);
     // camera rotation about X axis
-    private float pitch = 90.0f;
+    private float pitch;
     // camera rotation about Y axis
     private float yaw;
     // camera rotation about Z axis
     private float roll;
+
+    private static long window;
 
     private static Camera SINGLETON_INSTANCE = new Camera();
 
@@ -24,31 +26,17 @@ public class Camera {
 
     }
 
-    public static Camera getInstance() {
+    public static Camera getInstance(long WINDOW) {
+        window = WINDOW;
         return SINGLETON_INSTANCE;
     }
 
     public void move() {
-        long window = DisplayManager.WINDOW;
-
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
-            position.x += MOVEMENT_SPEED;
-        }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS) {
-            position.x -= MOVEMENT_SPEED;
-        }
-
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS) {
             position.y -= MOVEMENT_SPEED;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
             position.y += MOVEMENT_SPEED;
-        }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
-            position.z -= MOVEMENT_SPEED;
-        }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
-            position.z += MOVEMENT_SPEED;
         }
     }
 

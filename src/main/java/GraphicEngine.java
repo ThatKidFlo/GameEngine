@@ -1,6 +1,7 @@
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import entities.Player;
 import models.RawModel;
 import models.TexturedModel;
 import org.joml.Vector3f;
@@ -42,6 +43,8 @@ public class GraphicEngine {
     private TexturedModel staticModel, grass, fern;
     private List<Entity> entities;
     private Terrain terrain, terrain1;
+    public Player player;
+    public static GraphicEngine engine;
 
     /******************************************
      * ENGINE AND LIGHTS
@@ -59,10 +62,11 @@ public class GraphicEngine {
     private float[] textureCoordinates;
 
     public GraphicEngine initialize() {
+        engine = this;
         /******************************************ENGINE AND LIGHTS******************************************/
         DisplayManager.createDisplay();
         loader = new Loader();
-        camera = Camera.getInstance();
+        camera = Camera.getInstance(DisplayManager.WINDOW);
         light = new Light(new Vector3f(20000, 20000, 20000), new Vector3f(1, 1, 1));
         renderer = new MasterRenderer();
 
@@ -230,15 +234,24 @@ public class GraphicEngine {
     }
 
     public void gameLoop() {
+        TexturedModel playerModel = new TexturedModel(OBJLoader.loadObjModel("sphere", loader), new ModelTexture(loader.loadTexture("earth")));
+
+        player = new Player(DisplayManager.WINDOW, playerModel, new Vector3f(0, 0, -50), 0, 0, 0, 10);
+        Thread playerT = null;
         while (!glfwWindowShouldClose(DisplayManager.WINDOW)) {
             camera.move();
-            //entity.increaseRotation(0.01f, 0.01f, 0f);
+
+            playerT = new Thread(() -> { while(true) { player.move(); }});
+            playerT.start();
+            renderer.processEntity(player);
+
             renderer.processTerrain(terrain);
             renderer.processTerrain(terrain1);
             entities.stream().forEach((entity) -> renderer.processEntity(entity));
             renderer.render(light, camera);
             DisplayManager.updateDisplay();
         }
+        playerT.stop();
         stop();
     }
 

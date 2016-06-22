@@ -24,6 +24,11 @@ public class DisplayManager {
 
     public static int WINDOW_WIDTH = 1280;
     public static int WINDOW_HEIGHT = 720;
+    public static final int FPS_CAP = 120;
+
+    private static long lastFrameTime;
+    private static long currentFrameTime;
+    private static float timeDelta;
 
     public static void createDisplay() {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
@@ -52,6 +57,7 @@ public class DisplayManager {
                 DisplayManager.WINDOW_WIDTH = width;
                 DisplayManager.WINDOW_HEIGHT = height;
                 GL11.glViewport(0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
+                lastFrameTime = getCurrentMilis();
             }
         });
 
@@ -81,10 +87,21 @@ public class DisplayManager {
     public static void updateDisplay() {
         glfwPollEvents();
         glfwSwapBuffers(WINDOW);
+        currentFrameTime = getCurrentMilis();
+        timeDelta = (currentFrameTime - lastFrameTime) / 1000.0f;
+        lastFrameTime = currentFrameTime;
     }
 
     public static void closeDisplay() {
         glfwDestroyWindow(WINDOW);
         glfwTerminate();
+    }
+
+    public static float getTimeDelta() {
+        return timeDelta;
+    }
+
+    private static long getCurrentMilis() {
+        return (long) glfwGetTime() * 1000;
     }
 }

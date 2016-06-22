@@ -8,10 +8,10 @@ import org.joml.Vector3f;
  */
 public class Entity {
 
-    private TexturedModel model;
-    private Vector3f position;
-    private float rotX, rotY, rotZ;
-    private float scale;
+    protected TexturedModel model;
+    protected Vector3f position;
+    protected float rotX, rotY, rotZ;
+    protected float scale;
 
     public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
         this.model = model;
