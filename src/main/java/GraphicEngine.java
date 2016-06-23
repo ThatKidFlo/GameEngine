@@ -66,9 +66,17 @@ public class GraphicEngine {
         /******************************************ENGINE AND LIGHTS******************************************/
         DisplayManager.createDisplay();
         loader = new Loader();
-        camera = Camera.getInstance(DisplayManager.WINDOW);
+        initializeIOEvents();
+
+
+        // Loading the player must precede the camera, as the camera requires the player object, BUT IT MUST COME AFTER GLFW CONTEXT INIT
+        TexturedModel playerModel = new TexturedModel(OBJLoader.loadObjModel("stall", loader), new ModelTexture(loader.loadTexture("orange")));
+        player = new Player(playerModel, new Vector3f(0, 0.0f, -50), 0, 0, 0, 1);
+
+        camera = Camera.getInstance(DisplayManager.WINDOW, player);
         light = new Light(new Vector3f(20000, 20000, 20000), new Vector3f(1, 1, 1));
         renderer = new MasterRenderer();
+
 
         /******************************************MODELS AND ENTITIES******************************************/
         model = OBJLoader.loadObjModel("tree", loader);
@@ -100,8 +108,6 @@ public class GraphicEngine {
             entities.add(new Entity(fern, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 0.6f));
         }
 
-        /******************************************I/O INITIALIZATION******************************************/
-        initializeIOEvents();
         return this;
     }
 
@@ -234,9 +240,6 @@ public class GraphicEngine {
     }
 
     public void gameLoop() {
-        TexturedModel playerModel = new TexturedModel(OBJLoader.loadObjModel("stall", loader), new ModelTexture(loader.loadTexture("orange")));
-
-        player = new Player(playerModel, new Vector3f(0, 0.0f, -50), 0, 0, 0, 1);
         while (!glfwWindowShouldClose(DisplayManager.WINDOW)) {
             camera.move();
             player.move();

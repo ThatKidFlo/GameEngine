@@ -45,7 +45,7 @@ public class Player extends Entity {
         position.y += upwardSpeed * timeDelta;
         position.z += (float) Math.cos(Math.toRadians(getRotY())) * distanceMoved;
 
-        if(position.y < TERRAIN_HEIGHT) {
+        if (position.y < TERRAIN_HEIGHT) {
             upwardSpeed = 0.0f;
             position.y = TERRAIN_HEIGHT;
             isJumped = false;
