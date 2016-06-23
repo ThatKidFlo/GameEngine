@@ -43,7 +43,7 @@ public class DisplayManager {
 
         // Add antialiasing.
         //glfwWindowHint(GLFW_STENCIL_BITS, 4);
-        glfwWindowHint(GLFW_SAMPLES, 4);
+        //glfwWindowHint(GLFW_SAMPLES, 4);
 
         WINDOW = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My Game Engine! - v0.0.1", NULL, NULL);
 
@@ -57,7 +57,6 @@ public class DisplayManager {
                 DisplayManager.WINDOW_WIDTH = width;
                 DisplayManager.WINDOW_HEIGHT = height;
                 GL11.glViewport(0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
-                lastFrameTime = getCurrentMilis();
             }
         });
 
@@ -72,7 +71,7 @@ public class DisplayManager {
 
         glfwMakeContextCurrent(WINDOW);
         // Enable v-sync
-        glfwSwapInterval(1);
+        //glfwSwapInterval(1);
 
         glfwShowWindow(WINDOW);
 
@@ -82,6 +81,7 @@ public class DisplayManager {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+        lastFrameTime = getCurrentMilis();
     }
 
     public static void updateDisplay() {
@@ -102,6 +102,6 @@ public class DisplayManager {
     }
 
     private static long getCurrentMilis() {
-        return (long) glfwGetTime() * 1000;
+        return System.currentTimeMillis();
     }
 }

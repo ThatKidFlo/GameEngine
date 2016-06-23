@@ -15,33 +15,41 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class Player extends Entity {
 
     private GLFWKeyCallback handlerW;
-    private GLFWKeyCallback handlerA;
-    private GLFWKeyCallback handlerS;
-    private GLFWKeyCallback handlerD;
-
 
     // this variable is expressed in units/second
     private static final float RUN_SPEED = 20.0f;
     // this variable is expressed in radians/second
     private static final float TURN_SPEED = 160.0f;
+    private static final float JUMP_STRENGTH = 30.0f;
+    private static final float GRAVITY = -50.0f;
+    private static final float TERRAIN_HEIGHT = 0.0f;
 
-    private volatile float currentMovementSpeed = 0.0f;
-    private volatile float currentTurnSpeed = 0.0f;
+    private float currentMovementSpeed = 0.0f;
+    private float currentTurnSpeed = 0.0f;
+    private float upwardSpeed = 0.0f;
+    private boolean isJumped = false;
 
-    private long window;
-
-    public Player(long window, TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+    public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
         super(model, position, rotX, rotY, rotZ, scale);
-        this.window = window;
         initInput();
     }
 
     public synchronized void move() {
-        rotY += currentTurnSpeed * DisplayManager.getTimeDelta();
-        float distanceMoved = currentMovementSpeed * DisplayManager.getTimeDelta();
+        float timeDelta = DisplayManager.getTimeDelta();
+        rotY += currentTurnSpeed * timeDelta;
+        float distanceMoved = currentMovementSpeed * timeDelta;
+
+        upwardSpeed += GRAVITY * timeDelta;
 
         position.x += (float) Math.sin(Math.toRadians(getRotY())) * distanceMoved;
+        position.y += upwardSpeed * timeDelta;
         position.z += (float) Math.cos(Math.toRadians(getRotY())) * distanceMoved;
+
+        if(position.y < TERRAIN_HEIGHT) {
+            upwardSpeed = 0.0f;
+            position.y = TERRAIN_HEIGHT;
+            isJumped = false;
+        }
     }
 
     private void initInput() {
@@ -52,24 +60,30 @@ public class Player extends Entity {
                             glfwSetWindowShouldClose(DisplayManager.WINDOW, true);
                         }
 
-                        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
-                            currentMovementSpeed = RUN_SPEED;
-                        } else if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
-                            currentMovementSpeed = -RUN_SPEED;
-                        } else {
-                            currentMovementSpeed = 0.0f;
-                        }
-
-                        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
-                            currentTurnSpeed = TURN_SPEED;
-                        } else if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
-                            currentTurnSpeed = -TURN_SPEED;
-                        } else {
-                            currentTurnSpeed = 0.0f;
+                        if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
+                            if (key == GLFW.GLFW_KEY_W) {
+                                currentMovementSpeed = RUN_SPEED;
+                            } else if (key == GLFW.GLFW_KEY_S) {
+                                currentMovementSpeed = -RUN_SPEED;
+                            }
+                            if (key == GLFW.GLFW_KEY_D) {
+                                currentTurnSpeed = TURN_SPEED;
+                            } else if (key == GLFW.GLFW_KEY_A) {
+                                currentTurnSpeed = -TURN_SPEED;
+                            }
+                            if (key == GLFW.GLFW_KEY_SPACE && !isJumped) {
+                                upwardSpeed = JUMP_STRENGTH;
+                                isJumped = true;
+                            }
+                        } else if (action == GLFW.GLFW_RELEASE) {
+                            if (key == GLFW.GLFW_KEY_W || key == GLFW.GLFW_KEY_S) {
+                                currentMovementSpeed = 0.0f;
+                            } else if (key == GLFW.GLFW_KEY_D || key == GLFW.GLFW_KEY_A) {
+                                currentTurnSpeed = 0.0f;
+                            }
                         }
                     }
                 }
-
         );
     }
 }

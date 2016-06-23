@@ -234,15 +234,12 @@ public class GraphicEngine {
     }
 
     public void gameLoop() {
-        TexturedModel playerModel = new TexturedModel(OBJLoader.loadObjModel("sphere", loader), new ModelTexture(loader.loadTexture("earth")));
+        TexturedModel playerModel = new TexturedModel(OBJLoader.loadObjModel("stall", loader), new ModelTexture(loader.loadTexture("orange")));
 
-        player = new Player(DisplayManager.WINDOW, playerModel, new Vector3f(0, 0, -50), 0, 0, 0, 10);
-        Thread playerT = null;
+        player = new Player(playerModel, new Vector3f(0, 0.0f, -50), 0, 0, 0, 1);
         while (!glfwWindowShouldClose(DisplayManager.WINDOW)) {
             camera.move();
-
-            playerT = new Thread(() -> { while(true) { player.move(); }});
-            playerT.start();
+            player.move();
             renderer.processEntity(player);
 
             renderer.processTerrain(terrain);
@@ -251,7 +248,6 @@ public class GraphicEngine {
             renderer.render(light, camera);
             DisplayManager.updateDisplay();
         }
-        playerT.stop();
         stop();
     }
 

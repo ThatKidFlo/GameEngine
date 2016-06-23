@@ -32,11 +32,23 @@ public class Camera {
     }
 
     public void move() {
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS) {
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_C) == GLFW.GLFW_PRESS) {
             position.y -= MOVEMENT_SPEED;
         }
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
             position.y += MOVEMENT_SPEED;
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_UP) == GLFW.GLFW_PRESS) {
+            position.z -= MOVEMENT_SPEED;
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_DOWN) == GLFW.GLFW_PRESS) {
+            position.z += MOVEMENT_SPEED;
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
+            position.x -= MOVEMENT_SPEED;
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
+            position.x += MOVEMENT_SPEED;
         }
     }
 

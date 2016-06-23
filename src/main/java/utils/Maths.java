@@ -23,7 +23,7 @@ public final class Maths {
         // yields an identity matrix, which is column-major, in order to match OpenGL's internal representation.
         return new Matrix4f()
                 .translate(translation)
-                .rotateXYZ(rx, ry, rz)
+                .rotateXYZ((float) Math.toRadians(rx), (float) Math.toRadians(ry), (float) Math.toRadians(rz))
                 .scale(scale);
     }
 
@@ -38,7 +38,7 @@ public final class Maths {
         Vector3f negativeCameraPosition = new Vector3f(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
 
         return new Matrix4f()
-                .rotateXYZ((float)Math.toRadians(camera.getPitch()), (float)Math.toRadians(camera.getYaw()), 0.0f)
+                .rotateXYZ((float) Math.toRadians(camera.getPitch()), (float) Math.toRadians(camera.getYaw()), 0.0f)
                 .translate(negativeCameraPosition);
     }
 }
