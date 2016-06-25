@@ -75,8 +75,9 @@ public class Loader {
         int textureID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, textureID);
 
-
         GL30.glGenerateMipmap(textureID);
+        GL11.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        GL11.glTexParameterf(GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.2f);
         //GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
         // Specify the 2D image data that should be bound to the texture

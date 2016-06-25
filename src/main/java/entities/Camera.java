@@ -11,20 +11,14 @@ import renderengine.DisplayManager;
  */
 public class Camera {
 
-    enum TYPE {
-        PERSON3, PERSON1, FREE
-    }
-
+    private Player player;
     private Vector3f position = new Vector3f(0, 0, 0);
     // camera rotation about X axis
     private float pitch;
     // camera rotation about Y axis
-    private float yaw = -180.0f;
+    private float yaw;
     // camera rotation about Z axis
     private float roll;
-
-    private Player player;
-
     private float distanceFromPlayer = 50.0f;
     private float angleAroundPlayer = 0.0f;
     private float theta = 0.0f;
@@ -32,12 +26,15 @@ public class Camera {
     private float verticalDistance = 0.0f;
 
     private float Y_OFFSET = 5.0f;
+    private static final float MAX_PITCH = 90.0f;
+    private static final float MIN_PITCH = -1.0f;
+    private static final float MAX_DISTANCE_FROM_PLAYER = 90.0f;
+    private static final float MIN_DISTANCE_FROM_PLAYER = 3.0f;
+    private static final float MOVEMENT_SPEED = 40.0f;
     private static long window;
     private static Camera SINGLETON_INSTANCE = new Camera();
-    private static final float MOVEMENT_SPEED = 40.0f;
 
     private Camera() {
-
     }
 
     public static Camera getInstance(long WINDOW, Player player) {
@@ -115,12 +112,25 @@ public class Camera {
     private GLFWScrollCallbackI zoom;
 
     private void setupZoomHandler() {
-        GLFW.glfwSetScrollCallback(DisplayManager.WINDOW, zoom = (w, x, y) -> distanceFromPlayer -= y);
+        GLFW.glfwSetScrollCallback(DisplayManager.WINDOW,
+                zoom = (w, x, y) -> {
+                    if ((distanceFromPlayer < MAX_DISTANCE_FROM_PLAYER || y > 0.0f) && (distanceFromPlayer >
+                            MIN_DISTANCE_FROM_PLAYER || y < 0.0f))
+                        distanceFromPlayer -= y;
+                });
+
     }
 
     private void updateAngles() {
         if (GLFW.glfwGetMouseButton(DisplayManager.WINDOW, GLFW.GLFW_MOUSE_BUTTON_RIGHT) == GLFW.GLFW_PRESS) {
             pitch -= (DisplayManager.getDY() * 0.1f);
+
+            if (pitch < MIN_PITCH) {
+                pitch = MIN_PITCH;
+            } else if (pitch > MAX_PITCH) {
+                pitch = MAX_PITCH;
+            }
+
             angleAroundPlayer -= DisplayManager.getDX() * 0.3f;
         }
 

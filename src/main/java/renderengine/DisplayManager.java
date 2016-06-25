@@ -104,8 +104,6 @@ public final class DisplayManager {
                 // Add delta of x and y mouse coordinates
                 mouseDX = (int) xpos - mouseX;
                 mouseDY = (int) ypos - mouseY;
-                System.out.println("x=" + mouseX + " y=" + mouseY);
-                System.out.println("dx=" + mouseDX + " dy=" + mouseDY);
 
                 // Set new positions of x and y
                 mouseX = (int) xpos;
