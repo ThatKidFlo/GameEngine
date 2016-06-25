@@ -5,7 +5,6 @@ import entities.Player;
 import models.RawModel;
 import models.TexturedModel;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 /**
  * Created by ThatKidFlo on 15.04.2016.
@@ -31,9 +30,7 @@ public class GraphicEngine {
 
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
-    private GLFWKeyCallback keyCallback;
-    private GLFWCursorPosCallback cursorPosCallback;
-    private int mouseX, mouseY, mouseDX, mouseDY;
+
 
     /******************************************
      * MODELS AND ENTITIES
@@ -44,7 +41,6 @@ public class GraphicEngine {
     private List<Entity> entities;
     private Terrain terrain, terrain1;
     public Player player;
-    public static GraphicEngine engine;
 
     /******************************************
      * ENGINE AND LIGHTS
@@ -62,12 +58,9 @@ public class GraphicEngine {
     private float[] textureCoordinates;
 
     public GraphicEngine initialize() {
-        engine = this;
         /******************************************ENGINE AND LIGHTS******************************************/
         DisplayManager.createDisplay();
         loader = new Loader();
-        initializeIOEvents();
-
 
         // Loading the player must precede the camera, as the camera requires the player object, BUT IT MUST COME AFTER GLFW CONTEXT INIT
         TexturedModel playerModel = new TexturedModel(OBJLoader.loadObjModel("stall", loader), new ModelTexture(loader.loadTexture("orange")));
@@ -206,37 +199,6 @@ public class GraphicEngine {
                 20, 21, 23,
                 23, 21, 22
         };
-    }
-
-    private void initializeIOEvents() {
-        glfwSetKeyCallback(DisplayManager.WINDOW, keyCallback = new GLFWKeyCallback() {
-            @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
-                    glfwSetWindowShouldClose(DisplayManager.WINDOW, true);
-                }
-            }
-        });
-
-        //TODO:: complete handling mouse input, by rotating camera.
-        mouseX = mouseY = mouseDX = mouseDY = 0;
-        glfwSetCursorPosCallback(DisplayManager.WINDOW, cursorPosCallback = new GLFWCursorPosCallback() {
-            @Override
-            public void invoke(long window, double xpos, double ypos) {
-                // Add delta of x and y mouse coordinates
-                mouseDX += (int) xpos - mouseX;
-                mouseDY += (int) xpos - mouseY;
-                if (mouseX < xpos) {
-                    camera.increaseYaw(mouseDX * 0.001f);
-                } else {
-                    camera.increaseYaw(mouseDX * -0.001f);
-                }
-                // Set new positions of x and y
-                mouseX = (int) xpos;
-                mouseY = (int) ypos;
-
-            }
-        });
     }
 
     public void gameLoop() {

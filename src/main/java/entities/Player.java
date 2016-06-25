@@ -34,7 +34,7 @@ public class Player extends Entity {
         initInput();
     }
 
-    public synchronized void move() {
+    public void move() {
         float timeDelta = DisplayManager.getTimeDelta();
         rotY += currentTurnSpeed * timeDelta;
         float distanceMoved = currentMovementSpeed * timeDelta;

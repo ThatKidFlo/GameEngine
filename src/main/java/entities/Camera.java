@@ -2,6 +2,8 @@ package entities;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWScrollCallback;
+import org.lwjgl.glfw.GLFWScrollCallbackI;
 import renderengine.DisplayManager;
 
 /**
@@ -11,7 +13,7 @@ public class Camera {
 
     private Vector3f position = new Vector3f(0, 0, 0);
     // camera rotation about X axis
-    private float pitch;
+    private float pitch = 45f;
     // camera rotation about Y axis
     private float yaw;
     // camera rotation about Z axis
@@ -19,9 +21,12 @@ public class Camera {
 
     private Player player;
 
+    private float distanceFromPlayer = 50.0f;
+    private float angleAroundPlayer = 0.0f;
+
     private static long window;
     private static Camera SINGLETON_INSTANCE = new Camera();
-    private static final float MOVEMENT_SPEED = 20.0f;
+    private static final float MOVEMENT_SPEED = 40.0f;
 
     private Camera() {
 
@@ -34,6 +39,7 @@ public class Camera {
     }
 
     public void move() {
+        //TODO:: refactor this into the key callback would be nice.
         if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_C) == GLFW.GLFW_PRESS) {
             position.y -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
         }
@@ -76,5 +82,16 @@ public class Camera {
 
     public float getRoll() {
         return roll;
+    }
+
+    private GLFWScrollCallbackI zoom;
+    private void setupZoomHandler() {
+        GLFW.glfwSetScrollCallback(DisplayManager.WINDOW, zoom = (w, x, y) -> distanceFromPlayer -= y);
+    }
+
+    private void calculatePitch() {
+        if(GLFW.glfwGetMouseButton(DisplayManager.WINDOW, GLFW.GLFW_MOUSE_BUTTON_RIGHT) == GLFW.GLFW_PRESS) {
+            pitch -= (DisplayManager.getDY() * 0.1f);
+        }
     }
 }

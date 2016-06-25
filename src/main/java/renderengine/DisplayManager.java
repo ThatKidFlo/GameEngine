@@ -1,9 +1,6 @@
 package renderengine;
 
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.glfw.GLFWWindowSizeCallback;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
@@ -14,11 +11,15 @@ import static org.lwjgl.system.MemoryUtil.*;
 /**
  * Created by ThatKidFlo on 15.04.2016.
  */
-public class DisplayManager {
+public final class DisplayManager {
 
-    // We need to strongly reference callback instances.
+    // Need to strongly reference callback instances.
     private static GLFWErrorCallback errorCallback;
     private static GLFWWindowSizeCallback windowsSizeCallback;
+    private static GLFWKeyCallback keyCallback;
+    private static GLFWCursorPosCallback cursorPosCallback;
+
+    private static int mouseX, mouseY, mouseDX, mouseDY;
 
     public static long WINDOW = 0;
 
@@ -45,12 +46,30 @@ public class DisplayManager {
         //glfwWindowHint(GLFW_STENCIL_BITS, 4);
         //glfwWindowHint(GLFW_SAMPLES, 4);
 
-        WINDOW = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My Game Engine! - v0.0.1", NULL, NULL);
+        WINDOW = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My Game Engine! - v0.1.0", NULL, NULL);
 
         if (WINDOW == NULL) {
             throw new RuntimeException("Failed to create WINDOW.");
         }
 
+        DisplayManager.initializeIO();
+
+        glfwMakeContextCurrent(WINDOW);
+        // Enable v-sync
+        //glfwSwapInterval(1);
+
+        glfwShowWindow(WINDOW);
+        // This line is critical for LWJGL's interoperation with GLFW's
+        // OpenGL context, or any context that is managed externally.
+        // LWJGL detects the context that is current in the current thread,
+        // creates the GLCapabilities instance and makes the OpenGL
+        // bindings available for use.
+        GL.createCapabilities();
+        initializeIO();
+        lastFrameTime = getCurrentMilis();
+    }
+
+    private static void initializeIO() {
         glfwSetWindowSizeCallback(WINDOW, windowsSizeCallback = new GLFWWindowSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
@@ -60,7 +79,7 @@ public class DisplayManager {
             }
         });
 
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        final GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         glfwSetWindowPos(
                 WINDOW,
                 // center WINDOW on the X-axis
@@ -69,19 +88,28 @@ public class DisplayManager {
                 (vidMode.height() - WINDOW_HEIGHT) / 2
         );
 
-        glfwMakeContextCurrent(WINDOW);
-        // Enable v-sync
-        //glfwSwapInterval(1);
+        glfwSetKeyCallback(DisplayManager.WINDOW, keyCallback = new GLFWKeyCallback() {
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods) {
+                if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
+                    glfwSetWindowShouldClose(DisplayManager.WINDOW, true);
+                }
+            }
+        });
 
-        glfwShowWindow(WINDOW);
+        mouseX = mouseY = mouseDX = mouseDY = 0;
+        glfwSetCursorPosCallback(DisplayManager.WINDOW, cursorPosCallback = new GLFWCursorPosCallback() {
+            @Override
+            public void invoke(long window, double xpos, double ypos) {
+                // Add delta of x and y mouse coordinates
+                mouseDX += (int) xpos - mouseX;
+                mouseDY += (int) xpos - mouseY;
+                // Set new positions of x and y
+                mouseX = (int) xpos;
+                mouseY = (int) ypos;
 
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the GLCapabilities instance and makes the OpenGL
-        // bindings available for use.
-        GL.createCapabilities();
-        lastFrameTime = getCurrentMilis();
+            }
+        });
     }
 
     public static void updateDisplay() {
@@ -99,6 +127,14 @@ public class DisplayManager {
 
     public static float getTimeDelta() {
         return timeDelta;
+    }
+
+    public static int getDX() {
+        return mouseDX;
+    }
+
+    public static int getDY() {
+        return mouseDY;
     }
 
     private static long getCurrentMilis() {
