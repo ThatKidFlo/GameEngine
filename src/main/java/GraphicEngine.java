@@ -5,9 +5,6 @@ import entities.Player;
 import models.RawModel;
 import models.TexturedModel;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
 import renderengine.DisplayManager;
 import renderengine.Loader;
 import renderengine.MasterRenderer;
@@ -28,10 +25,6 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
  */
 public class GraphicEngine {
 
-    // We need to strongly reference callback instances.
-    private GLFWErrorCallback errorCallback;
-
-
     /******************************************
      * MODELS AND ENTITIES
      ******************************************/
@@ -50,13 +43,6 @@ public class GraphicEngine {
     private Light light;
     private MasterRenderer renderer;
 
-    @Deprecated
-    private float[] vertices;
-    @Deprecated
-    private int[] indices;
-    @Deprecated
-    private float[] textureCoordinates;
-
     public GraphicEngine initialize() {
         /******************************************ENGINE AND LIGHTS******************************************/
         DisplayManager.createDisplay();
@@ -66,7 +52,7 @@ public class GraphicEngine {
         TexturedModel playerModel = new TexturedModel(OBJLoader.loadObjModel("stall", loader), new ModelTexture(loader.loadTexture("orange")));
         player = new Player(playerModel, new Vector3f(0, 0.0f, -50), 0, 0, 0, 1);
 
-        camera = Camera.getInstance(DisplayManager.WINDOW, player);
+        camera = Camera.getInstance(player);
         light = new Light(new Vector3f(20000, 20000, 20000), new Vector3f(1, 1, 1));
         renderer = new MasterRenderer();
 
@@ -100,105 +86,7 @@ public class GraphicEngine {
             entities.add(new Entity(grass, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 1));
             entities.add(new Entity(fern, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0, 0, 0, 0.6f));
         }
-
         return this;
-    }
-
-    @Deprecated
-    private void initializeQuadModelData() {
-        vertices = new float[]{
-                -0.5f, 0.5f, -1.05f,
-                -0.5f, -0.5f, -1.05f,
-                0.5f, -0.5f, -1.05f,
-                0.5f, 0.5f, -1.05f,
-        };
-        indices = new int[]{
-                0, 1, 3,
-                3, 1, 2
-        };
-        textureCoordinates = new float[]{
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0
-        };
-    }
-
-    @Deprecated
-    private void initializeCubeModelData() {
-        vertices = new float[]{
-                -0.5f, 0.5f, -0.5f,
-                -0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                0.5f, 0.5f, -0.5f,
-
-                -0.5f, 0.5f, 0.5f,
-                -0.5f, -0.5f, 0.5f,
-                0.5f, -0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-
-                0.5f, 0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-
-                -0.5f, 0.5f, -0.5f,
-                -0.5f, -0.5f, -0.5f,
-                -0.5f, -0.5f, 0.5f,
-                -0.5f, 0.5f, 0.5f,
-
-                -0.5f, 0.5f, 0.5f,
-                -0.5f, 0.5f, -0.5f,
-                0.5f, 0.5f, -0.5f,
-                0.5f, 0.5f, 0.5f,
-
-                -0.5f, -0.5f, 0.5f,
-                -0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, 0.5f
-        };
-
-        textureCoordinates = new float[]{
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0,
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0,
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0,
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0,
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0,
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0
-        };
-
-        indices = new int[]{
-                0, 1, 3,
-                3, 1, 2,
-                4, 5, 7,
-                7, 5, 6,
-                8, 9, 11,
-                11, 9, 10,
-                12, 13, 15,
-                15, 13, 14,
-                16, 17, 19,
-                19, 17, 18,
-                20, 21, 23,
-                23, 21, 22
-        };
     }
 
     public void gameLoop() {
@@ -225,5 +113,4 @@ public class GraphicEngine {
     public static void main(String[] args) {
         new GraphicEngine().initialize().gameLoop();
     }
-
 }

@@ -25,20 +25,19 @@ public class Camera {
     private float horizontalDistance = 0.0f;
     private float verticalDistance = 0.0f;
 
+
     private float Y_OFFSET = 5.0f;
     private static final float MAX_PITCH = 90.0f;
     private static final float MIN_PITCH = -1.0f;
     private static final float MAX_DISTANCE_FROM_PLAYER = 90.0f;
     private static final float MIN_DISTANCE_FROM_PLAYER = 3.0f;
     private static final float MOVEMENT_SPEED = 40.0f;
-    private static long window;
     private static Camera SINGLETON_INSTANCE = new Camera();
 
     private Camera() {
     }
 
-    public static Camera getInstance(long WINDOW, Player player) {
-        window = WINDOW;
+    public static Camera getInstance(Player player) {
         SINGLETON_INSTANCE.player = player;
         SINGLETON_INSTANCE.setupZoomHandler();
         return SINGLETON_INSTANCE;
@@ -72,7 +71,6 @@ public class Camera {
         return roll;
     }
 
-    //TODO:: should limit these values, such that the camera can't be flipped over, and it can't zoom in past the player
     private void thirdPersonCameraControls() {
         updateAngles();
         calculateHorizontalDistance();
@@ -81,22 +79,22 @@ public class Camera {
     }
 
     private void freeLookCameraControls() {
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_C) == GLFW.GLFW_PRESS) {
+        if (GLFW.glfwGetKey(DisplayManager.WINDOW, GLFW.GLFW_KEY_C) == GLFW.GLFW_PRESS) {
             position.y -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
         }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
+        if (GLFW.glfwGetKey(DisplayManager.WINDOW, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
             position.y += MOVEMENT_SPEED * DisplayManager.getTimeDelta();
         }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_UP) == GLFW.GLFW_PRESS) {
+        if (GLFW.glfwGetKey(DisplayManager.WINDOW, GLFW.GLFW_KEY_UP) == GLFW.GLFW_PRESS) {
             position.z -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
         }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_DOWN) == GLFW.GLFW_PRESS) {
+        if (GLFW.glfwGetKey(DisplayManager.WINDOW, GLFW.GLFW_KEY_DOWN) == GLFW.GLFW_PRESS) {
             position.z += MOVEMENT_SPEED * DisplayManager.getTimeDelta();
         }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
+        if (GLFW.glfwGetKey(DisplayManager.WINDOW, GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
             position.x -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
         }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
+        if (GLFW.glfwGetKey(DisplayManager.WINDOW, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
             position.x += MOVEMENT_SPEED * DisplayManager.getTimeDelta();
         }
     }
@@ -114,9 +112,10 @@ public class Camera {
     private void setupZoomHandler() {
         GLFW.glfwSetScrollCallback(DisplayManager.WINDOW,
                 zoom = (w, x, y) -> {
-                    if ((distanceFromPlayer < MAX_DISTANCE_FROM_PLAYER || y > 0.0f) && (distanceFromPlayer >
-                            MIN_DISTANCE_FROM_PLAYER || y < 0.0f))
+                    if ((distanceFromPlayer < MAX_DISTANCE_FROM_PLAYER || y > 0.0f) &&
+                        (distanceFromPlayer > MIN_DISTANCE_FROM_PLAYER || y < 0.0f)) {
                         distanceFromPlayer -= y;
+                    }
                 });
 
     }
