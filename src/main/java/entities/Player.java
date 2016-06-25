@@ -67,9 +67,9 @@ public class Player extends Entity {
                                 currentMovementSpeed = -RUN_SPEED;
                             }
                             if (key == GLFW.GLFW_KEY_D) {
-                                currentTurnSpeed = TURN_SPEED;
-                            } else if (key == GLFW.GLFW_KEY_A) {
                                 currentTurnSpeed = -TURN_SPEED;
+                            } else if (key == GLFW.GLFW_KEY_A) {
+                                currentTurnSpeed = TURN_SPEED;
                             }
                             if (key == GLFW.GLFW_KEY_SPACE && !isJumped) {
                                 upwardSpeed = JUMP_STRENGTH;

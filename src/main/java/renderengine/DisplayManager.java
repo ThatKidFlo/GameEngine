@@ -19,7 +19,7 @@ public final class DisplayManager {
     private static GLFWKeyCallback keyCallback;
     private static GLFWCursorPosCallback cursorPosCallback;
 
-    private static int mouseX, mouseY, mouseDX, mouseDY;
+    private volatile static int mouseX, mouseY, mouseDX, mouseDY;
 
     public static long WINDOW = 0;
 
@@ -102,8 +102,11 @@ public final class DisplayManager {
             @Override
             public void invoke(long window, double xpos, double ypos) {
                 // Add delta of x and y mouse coordinates
-                mouseDX += (int) xpos - mouseX;
-                mouseDY += (int) xpos - mouseY;
+                mouseDX = (int) xpos - mouseX;
+                mouseDY = (int) ypos - mouseY;
+                System.out.println("x=" + mouseX + " y=" + mouseY);
+                System.out.println("dx=" + mouseDX + " dy=" + mouseDY);
+
                 // Set new positions of x and y
                 mouseX = (int) xpos;
                 mouseY = (int) ypos;

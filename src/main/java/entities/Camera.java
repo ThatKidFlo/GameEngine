@@ -11,11 +11,15 @@ import renderengine.DisplayManager;
  */
 public class Camera {
 
+    enum TYPE {
+        PERSON3, PERSON1, FREE
+    }
+
     private Vector3f position = new Vector3f(0, 0, 0);
     // camera rotation about X axis
-    private float pitch = 45f;
+    private float pitch;
     // camera rotation about Y axis
-    private float yaw;
+    private float yaw = -180.0f;
     // camera rotation about Z axis
     private float roll;
 
@@ -23,7 +27,11 @@ public class Camera {
 
     private float distanceFromPlayer = 50.0f;
     private float angleAroundPlayer = 0.0f;
+    private float theta = 0.0f;
+    private float horizontalDistance = 0.0f;
+    private float verticalDistance = 0.0f;
 
+    private float Y_OFFSET = 5.0f;
     private static long window;
     private static Camera SINGLETON_INSTANCE = new Camera();
     private static final float MOVEMENT_SPEED = 40.0f;
@@ -35,29 +43,12 @@ public class Camera {
     public static Camera getInstance(long WINDOW, Player player) {
         window = WINDOW;
         SINGLETON_INSTANCE.player = player;
+        SINGLETON_INSTANCE.setupZoomHandler();
         return SINGLETON_INSTANCE;
     }
 
     public void move() {
-        //TODO:: refactor this into the key callback would be nice.
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_C) == GLFW.GLFW_PRESS) {
-            position.y -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
-        }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
-            position.y += MOVEMENT_SPEED * DisplayManager.getTimeDelta();
-        }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_UP) == GLFW.GLFW_PRESS) {
-            position.z -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
-        }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_DOWN) == GLFW.GLFW_PRESS) {
-            position.z += MOVEMENT_SPEED * DisplayManager.getTimeDelta();
-        }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
-            position.x -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
-        }
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
-            position.x += MOVEMENT_SPEED * DisplayManager.getTimeDelta();
-        }
+        thirdPersonCameraControls();
     }
 
     public void increasePitch(float pitch) {
@@ -84,14 +75,62 @@ public class Camera {
         return roll;
     }
 
+    //TODO:: should limit these values, such that the camera can't be flipped over, and it can't zoom in past the player
+    private void thirdPersonCameraControls() {
+        updateAngles();
+        calculateHorizontalDistance();
+        calculateVerticalDistance();
+        updateCameraPosition();
+    }
+
+    private void freeLookCameraControls() {
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_C) == GLFW.GLFW_PRESS) {
+            position.y -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS) {
+            position.y += MOVEMENT_SPEED * DisplayManager.getTimeDelta();
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_UP) == GLFW.GLFW_PRESS) {
+            position.z -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_DOWN) == GLFW.GLFW_PRESS) {
+            position.z += MOVEMENT_SPEED * DisplayManager.getTimeDelta();
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
+            position.x -= MOVEMENT_SPEED * DisplayManager.getTimeDelta();
+        }
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
+            position.x += MOVEMENT_SPEED * DisplayManager.getTimeDelta();
+        }
+    }
+
+    private void calculateHorizontalDistance() {
+        horizontalDistance = distanceFromPlayer * (float) Math.cos(Math.toRadians(pitch));
+    }
+
+    private void calculateVerticalDistance() {
+        verticalDistance = distanceFromPlayer * (float) Math.sin(Math.toRadians(pitch));
+    }
+
     private GLFWScrollCallbackI zoom;
+
     private void setupZoomHandler() {
         GLFW.glfwSetScrollCallback(DisplayManager.WINDOW, zoom = (w, x, y) -> distanceFromPlayer -= y);
     }
 
-    private void calculatePitch() {
-        if(GLFW.glfwGetMouseButton(DisplayManager.WINDOW, GLFW.GLFW_MOUSE_BUTTON_RIGHT) == GLFW.GLFW_PRESS) {
+    private void updateAngles() {
+        if (GLFW.glfwGetMouseButton(DisplayManager.WINDOW, GLFW.GLFW_MOUSE_BUTTON_RIGHT) == GLFW.GLFW_PRESS) {
             pitch -= (DisplayManager.getDY() * 0.1f);
+            angleAroundPlayer -= DisplayManager.getDX() * 0.3f;
         }
+
+        theta = angleAroundPlayer + player.rotY;
+        yaw = 180.0f - theta;
+    }
+
+    private void updateCameraPosition() {
+        this.position.x = player.position.x - horizontalDistance * (float) Math.sin(Math.toRadians(theta));
+        this.position.y = player.position.y + verticalDistance + Y_OFFSET;
+        this.position.z = player.position.z - horizontalDistance * (float) Math.cos(Math.toRadians(theta));
     }
 }
