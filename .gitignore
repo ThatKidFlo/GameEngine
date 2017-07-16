@@ -4,3 +4,13 @@
 target/
 native/
 lib/
+.settings
+.class
+.project
+**/*.classpath
+**/*.orig
+target/
+out/
+bin/
+**/WebContent/**
+.vscode/*

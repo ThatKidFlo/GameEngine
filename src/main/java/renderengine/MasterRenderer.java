@@ -139,11 +139,11 @@ public class MasterRenderer {
         float frustumLength = FAR_PLANE - NEAR_PLANE;
 
         projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
-        projectionMatrix.m00 = xScale;
-        projectionMatrix.m11 = yScale;
-        projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustumLength);
-        projectionMatrix.m23 = -1;
-        projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustumLength);
-        projectionMatrix.m33 = 0;
+        projectionMatrix.m00(xScale);
+        projectionMatrix.m11(yScale);
+        projectionMatrix.m22(-((FAR_PLANE + NEAR_PLANE) / frustumLength));
+        projectionMatrix.m23(-1);
+        projectionMatrix.m32(-((2 * NEAR_PLANE * FAR_PLANE) / frustumLength));
+        projectionMatrix.m33(0);
     }
 }

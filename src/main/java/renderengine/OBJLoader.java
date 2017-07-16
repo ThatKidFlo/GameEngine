@@ -25,6 +25,7 @@ import java.util.stream.Stream;
  * normal N1, and the same goes for the other two. The f stands for face, meaning that these three combinations of
  * data form a triangle in 3D space.
  * <p>
+ *
  * Created by ThatKidFlo on 01.05.2016.
  */
 public class OBJLoader {
