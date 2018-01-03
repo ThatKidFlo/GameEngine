@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 
 /**
  * Created by ThatKidFlo on 15.04.2016.
@@ -76,8 +75,8 @@ public class Loader {
         glBindTexture(GL_TEXTURE_2D, textureID);
 
         GL30.glGenerateMipmap(textureID);
-        GL11.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        GL11.glTexParameterf(GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.2f);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.2f);
         //GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
         // Specify the 2D image data that should be bound to the texture
@@ -92,7 +91,7 @@ public class Loader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         // add anisotropic filtering to the texture which is currently active
-        GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+        glTexParameterf(GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
 
         // Keep track of the texture, for cleanup purposes.
         textures.add(textureID);
@@ -185,7 +184,6 @@ public class Loader {
      * @return - the converted data.
      */
     private FloatBuffer storeDataInFloatBuffer(float[] data) {
-        // LWJGL specific buffer allocation
         FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
         buffer.put(data);
         // Flipping means we are done writing to the buffer, and it will be read from.
