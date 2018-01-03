@@ -2,7 +2,6 @@ package entities;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.glfw.GLFWScrollCallbackI;
 import renderengine.DisplayManager;
 
@@ -24,7 +23,6 @@ public class Camera {
     private float theta = 0.0f;
     private float horizontalDistance = 0.0f;
     private float verticalDistance = 0.0f;
-
 
     private float Y_OFFSET = 5.0f;
     private static final float MAX_PITCH = 90.0f;

@@ -3,7 +3,7 @@ package entities;
 import models.TexturedModel;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
 import renderengine.DisplayManager;
 
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
@@ -14,7 +14,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
  */
 public class Player extends Entity {
 
-    private GLFWKeyCallback handlerW;
+    private GLFWKeyCallbackI handlerW;
 
     // this variable is expressed in units/second
     private static final float RUN_SPEED = 20.0f;
@@ -53,37 +53,33 @@ public class Player extends Entity {
     }
 
     private void initInput() {
-        glfwSetKeyCallback(DisplayManager.WINDOW, handlerW = new GLFWKeyCallback() {
-                    @Override
-                    public void invoke(long window, int key, int scancode, int action, int mods) {
-                        if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
-                            glfwSetWindowShouldClose(DisplayManager.WINDOW, true);
-                        }
+        glfwSetKeyCallback(DisplayManager.WINDOW, handlerW = (long window, int key, int scancode, int action, int mods) -> {
+            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
+                glfwSetWindowShouldClose(DisplayManager.WINDOW, true);
+            }
 
-                        if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
-                            if (key == GLFW.GLFW_KEY_W) {
-                                currentMovementSpeed = RUN_SPEED;
-                            } else if (key == GLFW.GLFW_KEY_S) {
-                                currentMovementSpeed = -RUN_SPEED;
-                            }
-                            if (key == GLFW.GLFW_KEY_D) {
-                                currentTurnSpeed = -TURN_SPEED;
-                            } else if (key == GLFW.GLFW_KEY_A) {
-                                currentTurnSpeed = TURN_SPEED;
-                            }
-                            if (key == GLFW.GLFW_KEY_SPACE && !isJumped) {
-                                upwardSpeed = JUMP_STRENGTH;
-                                isJumped = true;
-                            }
-                        } else if (action == GLFW.GLFW_RELEASE) {
-                            if (key == GLFW.GLFW_KEY_W || key == GLFW.GLFW_KEY_S) {
-                                currentMovementSpeed = 0.0f;
-                            } else if (key == GLFW.GLFW_KEY_D || key == GLFW.GLFW_KEY_A) {
-                                currentTurnSpeed = 0.0f;
-                            }
-                        }
-                    }
+            if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
+                if (key == GLFW.GLFW_KEY_W) {
+                    currentMovementSpeed = RUN_SPEED;
+                } else if (key == GLFW.GLFW_KEY_S) {
+                    currentMovementSpeed = -RUN_SPEED;
                 }
-        );
+                if (key == GLFW.GLFW_KEY_D) {
+                    currentTurnSpeed = -TURN_SPEED;
+                } else if (key == GLFW.GLFW_KEY_A) {
+                    currentTurnSpeed = TURN_SPEED;
+                }
+                if (key == GLFW.GLFW_KEY_SPACE && !isJumped) {
+                    upwardSpeed = JUMP_STRENGTH;
+                    isJumped = true;
+                }
+            } else if (action == GLFW.GLFW_RELEASE) {
+                if (key == GLFW.GLFW_KEY_W || key == GLFW.GLFW_KEY_S) {
+                    currentMovementSpeed = 0.0f;
+                } else if (key == GLFW.GLFW_KEY_D || key == GLFW.GLFW_KEY_A) {
+                    currentTurnSpeed = 0.0f;
+                }
+            }
+        });
     }
 }

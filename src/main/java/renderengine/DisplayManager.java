@@ -3,21 +3,16 @@ package renderengine;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import utils.Constants;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  * Created by ThatKidFlo on 15.04.2016.
  */
 public final class DisplayManager {
-
-    // Need to strongly reference callback instances.
-    private static GLFWErrorCallback errorCallback;
-    private static GLFWWindowSizeCallback windowsSizeCallback;
-    private static GLFWKeyCallback keyCallback;
-    private static GLFWCursorPosCallback cursorPosCallback;
 
     private volatile static int mouseX, mouseY, mouseDX, mouseDY;
 
@@ -28,14 +23,14 @@ public final class DisplayManager {
     public static final int FPS_CAP = 120;
 
     private static long lastFrameTime;
-    private static long currentFrameTime;
     private static float timeDelta;
 
     public static void createDisplay() {
-        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
+        GLFWErrorCallback.createPrint(System.err).set();
         if (!glfwInit()) {
             throw new RuntimeException("Failed to init GLFW.");
         }
+
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -43,20 +38,18 @@ public final class DisplayManager {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
         // Add antialiasing.
-        //glfwWindowHint(GLFW_STENCIL_BITS, 4);
-        //glfwWindowHint(GLFW_SAMPLES, 4);
+        glfwWindowHint(GLFW_STENCIL_BITS, 4);
+        glfwWindowHint(GLFW_SAMPLES, 4);
 
-        WINDOW = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My Game Engine! - v0.1.0", NULL, NULL);
+        WINDOW = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My Game Engine! - v0.0.1", NULL, NULL);
 
         if (WINDOW == NULL) {
             throw new RuntimeException("Failed to create WINDOW.");
         }
 
-        DisplayManager.initializeIO();
-
         glfwMakeContextCurrent(WINDOW);
         // Enable v-sync
-        //glfwSwapInterval(1);
+        glfwSwapInterval(1);
 
         glfwShowWindow(WINDOW);
         // This line is critical for LWJGL's interoperation with GLFW's
@@ -66,18 +59,15 @@ public final class DisplayManager {
         // bindings available for use.
         GL.createCapabilities();
         initializeIO();
-        lastFrameTime = getCurrentMilis();
+        lastFrameTime = getCurrentMillis();
     }
 
     private static void initializeIO() {
-        glfwSetWindowSizeCallback(WINDOW, windowsSizeCallback = new GLFWWindowSizeCallback() {
-            @Override
-            public void invoke(long window, int width, int height) {
-                DisplayManager.WINDOW_WIDTH = width;
-                DisplayManager.WINDOW_HEIGHT = height;
-                GL11.glViewport(0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
-            }
-        });
+        GLFWWindowSizeCallback.create((window, width, height) -> {
+            DisplayManager.WINDOW_WIDTH = width;
+            DisplayManager.WINDOW_HEIGHT = height;
+            GL11.glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        }).set(WINDOW);
 
         final GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         glfwSetWindowPos(
@@ -88,36 +78,34 @@ public final class DisplayManager {
                 (vidMode.height() - WINDOW_HEIGHT) / 2
         );
 
-        glfwSetKeyCallback(DisplayManager.WINDOW, keyCallback = new GLFWKeyCallback() {
-            @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
-                    glfwSetWindowShouldClose(DisplayManager.WINDOW, true);
-                }
+        GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
+            if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
+                glfwSetWindowShouldClose(DisplayManager.WINDOW, true);
             }
-        });
+        }).set(WINDOW);
 
         mouseX = mouseY = mouseDX = mouseDY = 0;
-        glfwSetCursorPosCallback(DisplayManager.WINDOW, cursorPosCallback = new GLFWCursorPosCallback() {
-            @Override
-            public void invoke(long window, double xpos, double ypos) {
-                // Add delta of x and y mouse coordinates
-                mouseDX = (int) xpos - mouseX;
-                mouseDY = (int) ypos - mouseY;
 
-                // Set new positions of x and y
-                mouseX = (int) xpos;
-                mouseY = (int) ypos;
+        GLFWCursorPosCallback.create((long window, double xpos, double ypos) -> {
+            // Add delta of x and y mouse coordinates
+            mouseDX = (int) xpos - mouseX;
+            mouseDY = (int) ypos - mouseY;
 
-            }
-        });
+            // Set new positions of x and y
+            mouseX = (int) xpos;
+            mouseY = (int) ypos;
+        }).set(WINDOW);
     }
 
     public static void updateDisplay() {
         glfwPollEvents();
         glfwSwapBuffers(WINDOW);
-        currentFrameTime = getCurrentMilis();
-        timeDelta = (currentFrameTime - lastFrameTime) / 1000.0f;
+        updateFrameTimes();
+    }
+
+    private static void updateFrameTimes() {
+        final long currentFrameTime = getCurrentMillis();
+        timeDelta = (currentFrameTime - lastFrameTime) / Constants.Time.MILLIS_TO_SECONDS;
         lastFrameTime = currentFrameTime;
     }
 
@@ -138,7 +126,7 @@ public final class DisplayManager {
         return mouseDY;
     }
 
-    private static long getCurrentMilis() {
+    private static long getCurrentMillis() {
         return System.currentTimeMillis();
     }
 }
