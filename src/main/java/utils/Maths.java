@@ -23,7 +23,7 @@ public final class Maths {
         // yields an identity matrix, which is column-major, in order to match OpenGL's internal representation.
         return new Matrix4f()
                 .translate(translation)
-                .rotateXYZ((float) Math.toRadians(rx), (float) Math.toRadians(ry), (float) Math.toRadians(rz))
+                .rotateXYZ(toRadiansf(rx), toRadiansf(ry), toRadiansf(rz))
                 .scale(scale);
     }
 
@@ -38,7 +38,37 @@ public final class Maths {
         Vector3f negativeCameraPosition = new Vector3f(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
 
         return new Matrix4f()
-                .rotateXYZ((float) Math.toRadians(camera.getPitch()), (float) Math.toRadians(camera.getYaw()), 0.0f)
+                .rotateXYZ(toRadiansf(camera.getPitch()), toRadiansf(camera.getYaw()), 0.0f)
                 .translate(negativeCameraPosition);
+    }
+
+    /**
+     * Returns the value of the angle provided as input in radians, as a float value.
+     *
+     * @param angle - float value for angle.
+     * @return - a float, representing the equivalent radians value.
+     */
+    public static float toRadiansf(float angle) {
+        return (float) Math.toRadians(angle);
+    }
+
+    /**
+     * Returns the value of sin(angle) in radians, as a float.
+     *
+     * @param angle - float value for angle.
+     * @return - a float, representing the sinus of angle.
+     */
+    public static float sinf(float angle) {
+        return (float) Math.sin(angle);
+    }
+
+    /**
+     * Returns the value of cos(angle) in radians, as a float.
+     *
+     * @param angle - float value for angle.
+     * @return - a float, representing the cosine of angle.
+     */
+    public static float cosf(float angle) {
+        return (float) Math.cos(angle);
     }
 }

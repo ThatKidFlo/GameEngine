@@ -33,10 +33,10 @@ public class EntityRenderer {
     }
 
     public void render(Map<TexturedModel, List<Entity>> entities) {
-        entities.keySet().stream().forEach(
+        entities.keySet().forEach(
                 (model) -> {
                     prepareTexturedModel(model);
-                    entities.get(model).stream().forEach(
+                    entities.get(model).forEach(
                             (entity) -> {
                                 prepareInstance(entity);
                                 GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11
@@ -51,7 +51,7 @@ public class EntityRenderer {
      * Prepares a {@link TexturedModel}  for rendering, by binding the VAO of the model to be rendered, and enabling the
      * vertex attribute arrays at index 0, 1, and 2. They contain, respectively:
      * 0: the positional data, (XYZ, floats).
-     * 1: the texture data,  (UV, flotas).
+     * 1: the texture data,  (UV, floats).
      * 2: the normal vectors (XYZ, floats).
      *
      * @param model - the {@link TexturedModel} to be prepared for rendering
@@ -72,7 +72,7 @@ public class EntityRenderer {
         GL20.glEnableVertexAttribArray(2);
         ModelTexture texture = model.getTexture();
 
-        if(texture.isHasTransparency()) {
+        if (texture.isHasTransparency()) {
             MasterRenderer.disableCulling();
         }
         shader.loadFakeLightingVariable(texture.isUseFakeLighting());
@@ -114,7 +114,7 @@ public class EntityRenderer {
 
     /**
      * This method is now {@link Deprecated}. It represents the old rendering technique, where this method, and all the
-     * preparations it implies would be called once PER {@link Entity} (implying means a lot of overhead). It has been
+     * preparations it implies would be called once PER {@link Entity} (implying a lot of overhead). It has been
      * superseded by methods exposed by the {@link MasterRenderer}, namely {@link MasterRenderer#render(Light, Camera)}.
      *
      * @param entity - the {@link Entity} to prepare for rendering.

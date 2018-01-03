@@ -25,7 +25,7 @@ public abstract class ShaderProgram {
      */
     private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 
-    public ShaderProgram(String vertexFile, String fragmentFile) {
+    protected ShaderProgram(String vertexFile, String fragmentFile) {
         vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
         fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
         programID = GL20.glCreateProgram();
@@ -91,8 +91,9 @@ public abstract class ShaderProgram {
 
     /**
      * Method that loads an int uniform variable into the shaders.
+     *
      * @param location - the uniform location to load to.
-     * @param value - the integer value to load.
+     * @param value    - the integer value to load.
      */
     protected void loadInt(int location, int value) {
         GL20.glUniform1i(location, value);
@@ -102,7 +103,7 @@ public abstract class ShaderProgram {
      * Method that loads a float uniform variable into the vertex shader.
      *
      * @param location - the name of the uniform variable to load to.
-     * @param value - the value to load
+     * @param value    - the value to load
      */
     protected void loadFloat(int location, float value) {
         GL20.glUniform1f(location, value);
@@ -131,17 +132,15 @@ public abstract class ShaderProgram {
      *
      * @param file - the name of the shader program file.
      * @param type - the type of shader that this program should be (e.g. GL20.GL_FRAGMENT_SHADER)
-     * @return
+     * @return - an int, representing the shader id.
      */
     private static int loadShader(String file, int type) {
         StringBuilder shaderSource = new StringBuilder();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+        try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 shaderSource.append(line).append(System.lineSeparator());
             }
-            reader.close();
         } catch (FileNotFoundException e) {
             System.err.println("File not found!");
             e.printStackTrace();
@@ -161,5 +160,4 @@ public abstract class ShaderProgram {
         }
         return shaderID;
     }
-
 }

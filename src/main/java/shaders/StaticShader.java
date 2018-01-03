@@ -11,8 +11,8 @@ import utils.Maths;
  */
 public class StaticShader extends ShaderProgram {
 
-    private static final String VERTEX_SHADER_FILE = "src/main/java/shaders/vertexShader";
-    private static final String FRAGMENT_SHADER_FILE = "src/main/java/shaders/fragmentShader";
+    private static final String VERTEX_SHADER_FILE = "src/main/java/shaders/vertex.vert";
+    private static final String FRAGMENT_SHADER_FILE = "src/main/java/shaders/fragment.frag";
 
     /**
      * Variable representing the transformation matrix location (i.e. the uniform variable).

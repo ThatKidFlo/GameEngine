@@ -97,7 +97,7 @@ public class GraphicEngine {
 
             renderer.processTerrain(terrain);
             renderer.processTerrain(terrain1);
-            entities.stream().forEach((entity) -> renderer.processEntity(entity));
+            entities.forEach((entity) -> renderer.processEntity(entity));
             renderer.render(light, camera);
             DisplayManager.updateDisplay();
         }

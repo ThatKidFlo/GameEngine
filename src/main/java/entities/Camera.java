@@ -2,8 +2,12 @@ package entities;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWScrollCallbackI;
+import org.lwjgl.glfw.GLFWScrollCallback;
 import renderengine.DisplayManager;
+
+import static utils.Maths.cosf;
+import static utils.Maths.sinf;
+import static utils.Maths.toRadiansf;
 
 /**
  * Created by ThatKidFlo on 17.04.2016.
@@ -98,24 +102,20 @@ public class Camera {
     }
 
     private void calculateHorizontalDistance() {
-        horizontalDistance = distanceFromPlayer * (float) Math.cos(Math.toRadians(pitch));
+        horizontalDistance = distanceFromPlayer * cosf(toRadiansf(pitch));
     }
 
     private void calculateVerticalDistance() {
-        verticalDistance = distanceFromPlayer * (float) Math.sin(Math.toRadians(pitch));
+        verticalDistance = distanceFromPlayer * sinf(toRadiansf(pitch));
     }
 
-    private GLFWScrollCallbackI zoom;
-
     private void setupZoomHandler() {
-        GLFW.glfwSetScrollCallback(DisplayManager.WINDOW,
-                zoom = (w, x, y) -> {
-                    if ((distanceFromPlayer < MAX_DISTANCE_FROM_PLAYER || y > 0.0f) &&
-                        (distanceFromPlayer > MIN_DISTANCE_FROM_PLAYER || y < 0.0f)) {
-                        distanceFromPlayer -= y;
-                    }
-                });
-
+        GLFWScrollCallback.create((w, x, y) -> {
+            if ((distanceFromPlayer < MAX_DISTANCE_FROM_PLAYER || y > 0.0f) &&
+                    (distanceFromPlayer > MIN_DISTANCE_FROM_PLAYER || y < 0.0f)) {
+                distanceFromPlayer -= y;
+            }
+        }).set(DisplayManager.WINDOW);
     }
 
     private void updateAngles() {
@@ -136,8 +136,8 @@ public class Camera {
     }
 
     private void updateCameraPosition() {
-        this.position.x = player.position.x - horizontalDistance * (float) Math.sin(Math.toRadians(theta));
+        this.position.x = player.position.x - horizontalDistance * sinf(toRadiansf(theta));
         this.position.y = player.position.y + verticalDistance + Y_OFFSET;
-        this.position.z = player.position.z - horizontalDistance * (float) Math.cos(Math.toRadians(theta));
+        this.position.z = player.position.z - horizontalDistance * cosf(toRadiansf(theta));
     }
 }

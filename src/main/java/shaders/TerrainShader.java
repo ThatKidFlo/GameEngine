@@ -10,8 +10,8 @@ import utils.Maths;
  * Created by ThatKidFlo on 03.05.2016.
  */
 public class TerrainShader extends ShaderProgram {
-    private static final String VERTEX_SHADER_FILE = "src/main/java/shaders/terrainVertexShader";
-    private static final String FRAGMENT_SHADER_FILE = "src/main/java/shaders/terrainFragmentShader";
+    private static final String VERTEX_SHADER_FILE = "src/main/java/shaders/terrain.vert";
+    private static final String FRAGMENT_SHADER_FILE = "src/main/java/shaders/terrain.frag";
 
     /**
      * Variable representing the transformation matrix location (i.e. the uniform variable).

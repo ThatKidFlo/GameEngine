@@ -3,22 +3,22 @@ package entities;
 import models.TexturedModel;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWKeyCallbackI;
+import org.lwjgl.glfw.GLFWKeyCallback;
 import renderengine.DisplayManager;
 
-import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
+import static utils.Maths.cosf;
+import static utils.Maths.sinf;
+import static utils.Maths.toRadiansf;
 
 /**
  * Created by ThatKidFlo on 22/06/16.
  */
 public class Player extends Entity {
 
-    private GLFWKeyCallbackI handlerW;
-
-    // this variable is expressed in units/second
+    // this value is expressed in units/second
     private static final float RUN_SPEED = 20.0f;
-    // this variable is expressed in radians/second
+    // this value is expressed in radians/second
     private static final float TURN_SPEED = 160.0f;
     private static final float JUMP_STRENGTH = 30.0f;
     private static final float GRAVITY = -50.0f;
@@ -41,9 +41,9 @@ public class Player extends Entity {
 
         upwardSpeed += GRAVITY * timeDelta;
 
-        position.x += (float) Math.sin(Math.toRadians(getRotY())) * distanceMoved;
+        position.x += sinf(toRadiansf(getRotY())) * distanceMoved;
         position.y += upwardSpeed * timeDelta;
-        position.z += (float) Math.cos(Math.toRadians(getRotY())) * distanceMoved;
+        position.z += cosf(toRadiansf(getRotY())) * distanceMoved;
 
         if (position.y < TERRAIN_HEIGHT) {
             upwardSpeed = 0.0f;
@@ -53,7 +53,7 @@ public class Player extends Entity {
     }
 
     private void initInput() {
-        glfwSetKeyCallback(DisplayManager.WINDOW, handlerW = (long window, int key, int scancode, int action, int mods) -> {
+        GLFWKeyCallback.create((long window, int key, int scancode, int action, int mods) -> {
             if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
                 glfwSetWindowShouldClose(DisplayManager.WINDOW, true);
             }
@@ -80,6 +80,6 @@ public class Player extends Entity {
                     currentTurnSpeed = 0.0f;
                 }
             }
-        });
+        }).set(DisplayManager.WINDOW);
     }
 }

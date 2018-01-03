@@ -207,9 +207,9 @@ public class OBJLoader {
         float[] textureArray = null;
         int[] indicesArray = null;
 
-        /**
-         * The point of this try is to ensure that the file is properly formatted (i.e. any X.parseX will fail fast,
-         * and be logged.
+        /*
+          The point of this try is to ensure that the file is properly formatted (i.e. any X.parseX will fail fast,
+          and be logged.
          */
         try {
             while (true) {

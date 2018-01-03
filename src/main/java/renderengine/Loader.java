@@ -100,9 +100,9 @@ public class Loader {
     }
 
     public void cleanup() {
-        vaos.stream().forEach((vao) -> GL30.glDeleteVertexArrays(vao));
-        vbos.stream().forEach((vbo) -> GL15.glDeleteBuffers(vbo));
-        textures.stream().forEach((tex) -> GL11.glDeleteTextures(tex));
+        vaos.forEach(GL30::glDeleteVertexArrays);
+        vbos.forEach(GL15::glDeleteBuffers);
+        textures.forEach(GL11::glDeleteTextures);
     }
 
     /**
